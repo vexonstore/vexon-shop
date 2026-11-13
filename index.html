@@ -3,316 +3,687 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="claude:viewport-fit-sides" content="cover">
-<title>فروشگاه VEXON</title>
+<title>VEXON STORE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="icon" href="logo.png">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+  // تم را قبل از نمایش صفحه تعیین می‌کنیم تا چشمک نزند
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('vexon-theme'); } catch (e) {}
+    if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+
 <style>
-/* طرح: آبی الکتریکی روی زمینه‌ی تیره، با کارت‌های شیشه‌ای و شبکه‌ی قیمت */
 :root {
   --bg: #f3f7ff;
-  --surface: #ffffff;
+  --surface: rgba(255, 255, 255, .72);
+  --solid: #ffffff;
   --fg: #0b1733;
   --muted: #5b6b8c;
   --accent: #1f5bdc;
   --accent-2: #14c4e8;
-  --line: #d9e3f7;
+  --line: rgba(31, 91, 220, .14);
   --chip: #e8efff;
-  --shadow: 0 10px 30px rgba(20, 60, 160, .12);
+  --shadow: 0 18px 40px -18px rgba(20, 60, 160, .28);
+  --glow1: rgba(20, 196, 232, .35);
+  --glow2: rgba(31, 91, 220, .25);
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #07102a;
-    --surface: #0e1d44;
-    --fg: #eef4ff;
-    --muted: #9fb3d9;
-    --accent: #3d7bff;
-    --accent-2: #2fd8f5;
-    --line: #20356b;
-    --chip: #14295a;
-    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
+[data-theme="dark"] {
   --bg: #07102a;
-  --surface: #0e1d44;
+  --surface: rgba(14, 29, 68, .72);
+  --solid: #0e1d44;
   --fg: #eef4ff;
   --muted: #9fb3d9;
   --accent: #3d7bff;
   --accent-2: #2fd8f5;
-  --line: #20356b;
+  --line: rgba(120, 160, 255, .16);
   --chip: #14295a;
-  --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  --shadow: 0 18px 40px -18px rgba(0, 0, 0, .6);
+  --glow1: rgba(47, 216, 245, .22);
+  --glow2: rgba(61, 123, 255, .25);
   color-scheme: dark;
 }
+
 * { box-sizing: border-box; }
+html, body { margin: 0; }
 body {
-  margin: 0;
-  background-color: var(--bg);
-  background-image: linear-gradient(color-mix(in srgb, var(--bg) 90%, transparent), color-mix(in srgb, var(--bg) 90%, transparent)), url("logo.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: var(--fg);
+  min-height: 100vh;
   font-family: "Vazirmatn", system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.9;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 24px;
+  color: var(--fg);
+  background:
+    radial-gradient(900px 500px at 92% -10%, var(--glow1), transparent 60%),
+    radial-gradient(800px 500px at -10% 12%, var(--glow2), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  padding: 18px 16px 130px;
+  transition: background-color .3s ease, color .3s ease;
 }
-img { max-width: 100%; }
 .wrap { max-width: 980px; margin: 0 auto; }
+img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
 
+/* هدر */
 header.top {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 18px 0;
+  padding: 6px 0 16px;
 }
-.logo { display: block; width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
-.brand { font-weight: 900; font-size: 20px; letter-spacing: .5px; color: var(--accent); }
+.brand-wrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.logo { width: 44px; height: 44px; border-radius: 14px; object-fit: cover; box-shadow: var(--shadow); }
+.brand { font-weight: 900; font-size: 20px; letter-spacing: .5px; color: var(--accent); white-space: nowrap; }
 .brand span { color: var(--accent-2); }
-.top a.cta-small {
-  color: #fff; background: var(--accent); text-decoration: none;
-  padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;
+.actions { display: flex; align-items: center; gap: 8px; }
+.iconbtn {
+  width: 42px; height: 42px; border-radius: 14px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); color: var(--fg);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  font-size: 18px; display: grid; place-items: center;
+}
+.cta {
+  color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  text-decoration: none; padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;
+  box-shadow: var(--shadow);
 }
 
+/* معرفی */
 .hero {
-  position: relative; overflow: hidden;
-  border-radius: 24px; padding: 34px 24px; margin: 6px 0 22px;
+  position: relative; overflow: hidden; isolation: isolate;
+  border-radius: 26px; padding: 34px 26px; margin: 4px 0 20px;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #fff; box-shadow: var(--shadow);
 }
+.hero::after {
+  content: ""; position: absolute; z-index: -1; width: 280px; height: 280px; border-radius: 50%;
+  background: rgba(255, 255, 255, .14); left: -90px; top: -110px;
+}
 .hero h1 { margin: 0 0 8px; font-size: 26px; font-weight: 900; line-height: 1.5; text-wrap: balance; }
-.hero p { margin: 0 0 16px; opacity: .92; max-width: 60ch; }
-.hero .badges { display: flex; flex-wrap: wrap; gap: 8px; }
-.hero .badges span {
-  background: rgba(255,255,255,.18); padding: 4px 12px; border-radius: 999px; font-size: 13px;
+.hero p { margin: 0 0 16px; opacity: .93; max-width: 60ch; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badges span {
+  background: rgba(255, 255, 255, .2); padding: 4px 12px; border-radius: 999px; font-size: 13px;
 }
 
-nav.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+/* اسلایدر زیر کادر معرفی */
+.slider { margin: 0 0 26px; }
+.slider > h2 { font-size: 18px; font-weight: 900; margin: 0 0 12px; }
+.slides { position: relative; }
+.slide {
+  display: none; flex-direction: column; gap: 10px;
+  border-radius: 26px; padding: 28px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; box-shadow: var(--shadow);
+}
+.slide.on { display: flex; animation: slideIn .6s ease both; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+.slide .eyebrow { opacity: .8; font-size: 13px; }
+.slide .t { font-size: 26px; font-weight: 900; line-height: 1.5; text-wrap: balance; }
+.slide .d { opacity: .92; max-width: 60ch; }
+.slide .row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; margin-top: 8px;
+}
+.slide .pr { font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.slide .pr small { font-size: 12px; font-weight: 500; opacity: .85; }
+.slide .go {
+  background: #fff; color: var(--accent); text-decoration: none; font-weight: 700;
+  padding: 10px 18px; border-radius: 999px;
+}
+.ctrl { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.pp {
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer; flex: none;
+  background: var(--surface); border: 1px solid var(--line); color: var(--fg); font-size: 13px;
+}
+.dots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dot {
+  width: 18px; height: 4px; border-radius: 4px; border: 0; padding: 0; cursor: pointer;
+  background: var(--line); transition: width .3s ease, background .3s ease;
+}
+.dot.on { width: 44px; background: var(--accent); }
+
+/* جستجو و تب‌ها */
+.search {
+  width: 100%; font: inherit; color: var(--fg); margin-bottom: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 12px 16px; outline: none; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.search:focus { border-color: var(--accent-2); box-shadow: 0 0 0 3px var(--glow1); }
+nav.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
 nav.tabs button {
   font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
   background: var(--chip); color: var(--fg); border: 1px solid var(--line);
-  padding: 8px 16px; border-radius: 999px;
+  padding: 8px 16px; border-radius: 999px; transition: transform .15s ease;
 }
-nav.tabs button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
-nav.tabs button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
-
-section.group { margin: 0 0 26px; }
-section.group > h2 {
-  font-size: 18px; font-weight: 900; margin: 0 0 12px; text-wrap: balance;
+nav.tabs button:active { transform: scale(.96); }
+nav.tabs button[aria-pressed="true"] {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-color: transparent;
 }
-section.group > p.note { margin: -6px 0 14px; color: var(--muted); font-size: 14px; }
+nav.tabs button:focus-visible, .iconbtn:focus-visible, .cta:focus-visible, .buy:focus-visible,
+.sbtn:focus-visible, .pp:focus-visible, .dot:focus-visible, .slide .go:focus-visible {
+  outline: 2px solid var(--accent-2); outline-offset: 2px;
+}
 
+/* بخش‌ها و کارت‌ها */
+section.group { margin: 0 0 28px; }
+section.group > h2 { font-size: 18px; font-weight: 900; margin: 0 0 4px; }
+p.note { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
 .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
 .card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
-  padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0;
-  box-shadow: var(--shadow);
+  position: relative; min-width: 0;
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  padding: 18px 16px 16px; box-shadow: var(--shadow);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
-.card .title { font-weight: 700; line-height: 1.7; min-width: 0; overflow-wrap: anywhere; }
+.card .title { font-weight: 700; line-height: 1.7; overflow-wrap: anywhere; }
 .card .sub { color: var(--muted); font-size: 13px; }
-.card .price { margin-top: auto; font-weight: 900; font-size: 18px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.card .price {
+  margin-top: auto; font-weight: 900; font-size: 18px; color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
 .card .price small { font-weight: 500; font-size: 12px; color: var(--muted); }
-.card a.buy {
+.old {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  text-decoration: line-through; text-decoration-thickness: 1.5px;
+  margin-inline-end: 6px;
+}
+.badge {
+  position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700;
+  color: #fff; padding: 2px 10px; border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a59, #ff3d7f);
+}
+.buy {
   display: block; text-align: center; text-decoration: none; font-weight: 700;
   background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
-  padding: 10px; border-radius: 12px;
+  padding: 10px; border-radius: 13px;
 }
-.card a.buy:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.empty { color: var(--muted); padding: 30px 0; text-align: center; }
 
-.plans { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-.plan-term { font-weight: 900; font-size: 16px; margin: 4px 0 0; color: var(--accent-2); }
-
+/* فوتر */
 footer.bottom {
-  margin-top: 34px; padding: 22px 0 0; border-top: 1px solid var(--line);
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 14px;
+  margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px;
+  color: var(--muted); font-size: 14px;
 }
 footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none; }
 
-.empty { color: var(--muted); padding: 20px 0; }
-[hidden] { display: none !important; }
-
-/* نوار پایین شناور، مثل نوار پیام تلگرام */
+/* نوار شناور پایین */
 .dock {
-  position: fixed;
-  left: max(12px, env(safe-area-inset-left, 0px));
-  right: max(12px, env(safe-area-inset-right, 0px));
-  bottom: max(12px, env(safe-area-inset-bottom, 0px));
-  max-width: 760px; margin: 0 auto;
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px; border-radius: 999px;
-  background: var(--surface); border: 1px solid var(--line);
-  box-shadow: var(--shadow); z-index: 20;
+  position: fixed; bottom: max(12px, env(safe-area-inset-bottom, 0px)); left: 50%;
+  transform: translateX(-50%); width: min(560px, calc(100% - 24px));
+  display: flex; justify-content: space-around; align-items: stretch; gap: 6px;
+  padding: 7px; border-radius: 24px; z-index: 20;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
 }
-.dock-pill {
-  flex: none; display: flex; align-items: center; gap: 6px;
-  background: var(--accent); color: #fff; text-decoration: none;
-  font-weight: 700; font-size: 14px; white-space: nowrap;
-  padding: 10px 16px; border-radius: 999px;
+.dock a, .dock button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; text-decoration: none; cursor: pointer;
+  font: inherit; font-size: 12px; font-weight: 700; line-height: 1.4;
+  color: var(--muted); background: transparent; border: 1px solid transparent;
+  padding: 8px 4px; border-radius: 16px; transition: background .15s ease;
 }
-.dock-icons {
-  flex: 1; min-width: 0; display: flex; justify-content: space-around; align-items: center;
+.dock a:hover, .dock button:hover { background: var(--chip); }
+.dock .ico { font-size: 18px; }
+.dock .main {
+  flex: 1.3; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2));
 }
-.dock-ico-btn {
-  width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent;
-  color: var(--muted); font-size: 19px; cursor: pointer;
-  display: grid; place-items: center; text-decoration: none;
-}
-.dock-ico-btn:hover { background: var(--chip); }
-.dock-round {
-  flex: none; width: 46px; height: 46px; border-radius: 50%;
-  display: grid; place-items: center; text-decoration: none; font-size: 20px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
-}
+.dock .main:hover { background: linear-gradient(135deg, var(--accent), var(--accent-2)); filter: brightness(1.08); }
 .dock a:focus-visible, .dock button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* پنل (مستطیل گرد وسط صفحه) */
+.sheet-wrap {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.sheet-bg {
+  position: absolute; inset: 0; background: rgba(4, 10, 30, .5);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.sheet {
+  position: relative; width: min(420px, 100%);
+  background: var(--solid); color: var(--fg);
+  border: 1px solid var(--line); border-radius: 24px; padding: 22px 20px 20px;
+  box-shadow: var(--shadow);
+  animation: pop .22s ease both;
+}
+@keyframes pop { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.sheet h3 { margin: 0; font-size: 18px; font-weight: 900; line-height: 1.6; }
+.sheet p { margin: 0 0 16px; color: var(--muted); }
+.sbtn {
+  display: block; text-align: center; text-decoration: none; font-weight: 700;
+  color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  padding: 12px; border-radius: 14px; margin-top: 10px;
+}
+
+/* ورود نرم هنگام باز شدن صفحه */
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(36px) scale(.97); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.hero {
+  animation: heroIn 1s cubic-bezier(.16, 1, .3, 1) both;
+}
+header.top, .search, nav.tabs {
+  animation: fadeUp .7s ease both;
+}
+header.top { animation-delay: .05s; }
+.search    { animation-delay: .35s; }
+nav.tabs   { animation-delay: .45s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero, header.top, .search, nav.tabs, .slide.on { animation: none; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .card { transition: transform .15s ease; }
+  .card { animation: rise .4s ease both; transition: transform .15s ease; }
   .card:hover { transform: translateY(-2px); }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 380px) {
+  .hero h1 { font-size: 22px; }
+  .brand { font-size: 17px; }
+  .slide .t { font-size: 22px; }
+  .dock a, .dock button { font-size: 11px; }
 }
 </style>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="icon" href="logo.png">
 </head>
 <body>
-<div class="wrap">
+
+<!--
+  ===== محتوای سایت: فقط این بخش را ویرایش کنید =====
+  قوانین JSON: همه‌ی کلیدها و متن‌ها داخل "دابل‌کوتیشن" باشند،
+  بین آخرین آیتم و ] یا } ویرگول نگذارید، و کامنت (//) ننویسید.
+  قیمت را فقط عدد بنویسید؛ واحد در unit مشخص می‌شود.
+  برای خالی گذاشتن قیمت: "price": null
+  badge اختیاری است؛ اگر نمی‌خواهید، آن خط را حذف کنید.
+  old (قیمت قبل از تخفیف) اختیاری است؛ اگر بنویسید، خط‌خورده نمایش داده می‌شود.
+  slider.category: id دسته‌ای که اسلایدر زیر کادر معرفی از آن ساخته می‌شود.
+  دکمه‌های پایین: هر آیتم dock که "panel" دارد، با زدن، پنل باز می‌کند
+  و دکمه‌های داخل panel.buttons به لینک‌ها می‌روند.
+-->
+<script id="site-content" type="application/json">
+{
+  "brand": { "name": "VEXON", "sub": "STORE" },
+  "logo": "logo.png",
+  "bot": "https://t.me/VEXONXBot",
+  "currency": "هزار تومان",
+  "hero": {
+    "title": "فروشگاه دیجیتال VEXON",
+    "text": "فیلترشکن با اشتراک نامحدود و گیفت‌های تلگرامی، با تحویل سریع. سفارش و پرداخت از داخل ربات انجام می‌شود.",
+    "badges": ["تحویل سریع", "پشتیبانی در ربات", "پرداخت کارت به کارت"]
+  },
+  "slider": {
+    "category": "vpn",
+    "title": "پیشنهاد ویژه فیلترشکن",
+    "text": "اشتراک نامحدود با تحویل سریع از داخل ربات"
+  },
+  "categories": [
+    {
+      "id": "vpn",
+      "label": "🛡 خرید فیلترشکن",
+      "note": "اشتراک نامحدود؛ انتخاب مدت و تعداد کاربر",
+      "cta": "🛒 خرید در ربات",
+      "items": [
+        { "title": "🗓 یک‌ماهه", "sub": "۲ کاربر · نامحدود", "price": 210 },
+        { "title": "🗓 یک‌ماهه", "sub": "۳ کاربر · نامحدود", "price": 228, "old": 260, "badge": "تخفیف" },
+        { "title": "🗓 دوماهه", "sub": "۱ کاربر · نامحدود", "price": 295 },
+        { "title": "🗓 دوماهه", "sub": "۲ کاربر · نامحدود", "price": 310, "old": 350, "badge": "پرفروش" },
+        { "title": "🗓 دوماهه", "sub": "۳ کاربر · نامحدود", "price": 329 }
+      ]
+    },
+    {
+      "id": "gift",
+      "label": "🎁 فروش گیفت",
+      "note": "گیفت به کانال یا گروه مورد نظر شما ارسال می‌شود",
+      "cta": "🎁 خرید در ربات",
+      "items": [
+        { "title": "گیفت عروسک خرس 🧸", "price": 99 },
+        { "title": "گیفت قلب بنفش 💝", "price": 99 },
+        { "title": "گیفت کادو / هدیه 🎁", "price": 135 },
+        { "title": "گیفت گل 🌹", "price": 135 },
+        { "title": "گیفت کیک تولد 🎂", "price": 255, "old": 290, "badge": "تخفیف" },
+        { "title": "گیفت دسته گل 💐", "price": 255 },
+        { "title": "گیفت موشک 🚀", "price": 255 },
+        { "title": "گیفت شامپاین 🍾", "price": 255 },
+        { "title": "گیفت انگشتر 💍", "price": 485, "badge": "ویژه" },
+        { "title": "گیفت الماس 💎", "price": 485 },
+        { "title": "گیفت جام / کاپ 🏆", "price": 485 }
+      ]
+    }
+  ],
+  "dock": [
+    { "icon": "🏠", "label": "خانه", "link": "#top" },
+    {
+      "icon": "📣",
+      "label": "کانال",
+      "panel": {
+        "title": "کانال فروشگاه VEXON",
+        "text": "آخرین اطلاعیه‌ها، تخفیف‌ها و موجودی جدید را در کانال دنبال کنید.",
+        "buttons": [
+          { "label": "ورود به کانال", "link": "https://t.me/VEXONX_Stor" }
+        ]
+      }
+    },
+    {
+      "icon": "🛒",
+      "label": "خرید در ربات",
+      "main": true,
+      "panel": {
+        "title": "خرید در ربات",
+        "text": "سفارش، انتخاب مدت و پرداخت کارت به کارت از داخل ربات انجام می‌شود.",
+        "buttons": [
+          { "label": "ورود به ربات فروشگاه", "link": "https://t.me/VEXONXBot" }
+        ]
+      }
+    },
+    {
+      "icon": "💬",
+      "label": "پشتیبانی",
+      "panel": {
+        "title": "پشتیبانی",
+        "text": "برای سوال، مشکل یا پیگیری سفارش با پشتیبانی در تماس باشید.",
+        "buttons": [
+          { "label": "ارسال پیام به پشتیبانی", "link": "https://t.me/Fenadiin" }
+        ]
+      }
+    }
+  ],
+  "footerText": "© VEXON STORE",
+  "footerLinks": [
+    { "label": "کانال فروشگاه", "link": "https://t.me/VEXONX_Stor" },
+    { "label": "ربات فروشگاه", "link": "https://t.me/VEXONXBot" }
+  ],
+  "emptyText": "موردی پیدا نشد"
+}
+</script>
+
+<div class="wrap" id="top">
   <header class="top">
-    <img class="logo" src="logo.png" alt="VEXON STORE" width="44" height="44">
-    <a class="cta-small" href="https://t.me/VEXONXBot" target="_blank" rel="noopener">ورود به ربات</a>
+    <div class="brand-wrap">
+      <img class="logo" id="logo" src="logo.png" alt="" width="44" height="44">
+      <div class="brand" id="brand"></div>
+    </div>
+    <div class="actions">
+      <button class="iconbtn" id="theme" type="button" aria-label="تغییر حالت روشن و تاریک">🌙</button>
+      <a class="cta" id="cta" href="#" target="_blank" rel="noopener">ورود به ربات</a>
+    </div>
   </header>
 
   <section class="hero" aria-label="معرفی">
-    <h1>فروشگاه دیجیتال VEXON</h1>
-    <p>فیلترشکن با اشتراک نامحدود و گیفت‌های تلگرامی، با تحویل سریع. سفارش و پرداخت از داخل ربات انجام می‌شود.</p>
-    <div class="badges">
-      <span>تحویل سریع</span>
-      <span>پشتیبانی در ربات</span>
-      <span>پرداخت کارت به کارت</span>
-    </div>
+    <h1 id="hero-title"></h1>
+    <p id="hero-text"></p>
+    <div class="badges" id="hero-badges"></div>
   </section>
 
-  <nav class="tabs" aria-label="دسته‌ها" id="tabs"></nav>
+  <section class="slider" id="slider" aria-label="پیشنهادهای ویژه"></section>
 
+  <input class="search" id="q" type="search" placeholder="جستجوی محصول…" aria-label="جستجوی محصول">
+  <nav class="tabs" aria-label="دسته‌ها" id="tabs"></nav>
   <main id="catalog"></main>
 
   <footer class="bottom">
-    <div>© VEXON STORE</div>
-    <div>
-      <a href="https://t.me/VEXONX_Stor" target="_blank" rel="noopener">کانال فروشگاه</a>
-      &nbsp;·&nbsp;
-      <a href="https://t.me/VEXONXBot" target="_blank" rel="noopener">ربات فروشگاه</a>
-    </div>
+    <div id="footer-text"></div>
+    <div id="footer-links"></div>
   </footer>
 </div>
 
+<nav class="dock" id="dock" aria-label="میانبرها"></nav>
+
+<div class="sheet-wrap" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head">
+      <h3 id="sheet-title"></h3>
+      <button class="iconbtn" type="button" data-close aria-label="بستن">✕</button>
+    </div>
+    <p id="sheet-text"></p>
+    <div id="sheet-btns"></div>
+  </div>
+</div>
+
 <script>
-const BOT = "https://t.me/VEXONXBot";
+const C = JSON.parse(document.getElementById('site-content').textContent);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fa = s => String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 
-const CATALOG = [
-  { key: "vpn", label: "🛡 خرید فیلترشکن", type: "vpn" },
-  { key: "gift", label: "🎁 فروش گیفت", type: "gift" }
-];
+let current = 'all';
 
-const VPN_PLANS = [
-  { term: "🗓 یک‌ماهه", users: 2, price: 210 },
-  { term: "🗓 یک‌ماهه", users: 3, price: 228 },
-  { term: "🗓 دوماهه", users: 1, price: 295 },
-  { term: "🗓 دوماهه", users: 2, price: 310 },
-  { term: "🗓 دوماهه", users: 3, price: 329 }
-];
-
-const GIFTS = [
-  { name: "گیفت عروسک خرس 🧸", price: 99 },
-  { name: "گیفت قلب بنفش 💝", price: 99 },
-  { name: "گیفت کادو / هدیه 🎁", price: 135 },
-  { name: "گیفت گل 🌹", price: 135 },
-  { name: "گیفت کیک تولد 🎂", price: 255 },
-  { name: "گیفت دسته گل 💐", price: 255 },
-  { name: "گیفت موشک 🚀", price: 255 },
-  { name: "گیفت شامپاین 🍾", price: 255 },
-  { name: "گیفت انگشتر 💍", price: 485 },
-  { name: "گیفت الماس 💎", price: 485 },
-  { name: "گیفت جام / کاپ 🏆", price: 485 }
-];
-
-const fa = (n) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
-const money = (thousand) => fa(thousand) + ' <small>هزار تومان</small>';
-
-function vpnSection() {
-  const cards = VPN_PLANS.map(p => `
-    <article class="card">
-      <div class="title">${p.term}</div>
-      <div class="sub">${fa(p.users)} کاربر · نامحدود</div>
-      <div class="price">${money(p.price)}</div>
-      <a class="buy" href="${BOT}" target="_blank" rel="noopener">🛒 خرید در ربات</a>
-    </article>`).join("");
-  return `
-    <section class="group" id="vpn">
-      <h2>🛡 خرید فیلترشکن</h2>
-      <p class="note">اشتراک نامحدود؛ انتخاب مدت و تعداد کاربر</p>
-      <div class="grid plans">${cards}</div>
-    </section>`;
+/* ---------- قیمت (با قیمت قبل از تخفیف خط‌خورده) ---------- */
+function priceHtml(it, unit) {
+  if (it.price == null) return '';
+  const old = it.old != null ? `<s class="old">${fa(it.old)}</s>` : '';
+  return `${old}${fa(it.price)} <small>${esc(unit || C.currency)}</small>`;
 }
 
-function giftSection() {
-  const cards = GIFTS.map(g => `
-    <article class="card">
-      <div class="title">${g.name}</div>
-      <div class="price">${money(g.price)}</div>
-      <a class="buy" href="${BOT}" target="_blank" rel="noopener">🎁 خرید در ربات</a>
-    </article>`).join("");
-  return `
-    <section class="group" id="gift">
-      <h2>🎁 فروش گیفت</h2>
-      <p class="note">گیفت به کانال یا گروه مورد نظر شما ارسال می‌شود</p>
-      <div class="grid">${cards}</div>
-    </section>`;
+/* ---------- اسلایدر ---------- */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-const SECTIONS = { all: [vpnSection, giftSection], vpn: [vpnSection], gift: [giftSection] };
-let current = "all";
+let slideIdx = 0, slideCount = 0, slideTimer = null, paused = false;
 
-function render() {
-  document.getElementById("catalog").innerHTML = SECTIONS[current].map(fn => fn()).join("");
+function showSlide(i) {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  if (!slides.length) return;
+  slideIdx = (i + slideCount) % slideCount;
+  slides.forEach((s, k) => s.classList.toggle('on', k === slideIdx));
+  dots.forEach((d, k) => d.classList.toggle('on', k === slideIdx));
+}
+
+function startSlider() {
+  clearInterval(slideTimer);
+  if (!paused && slideCount > 1) {
+    slideTimer = setInterval(() => showSlide(slideIdx + 1), 5000);
+  }
+}
+
+function renderSlider() {
+  const cat = C.categories.find(c => c.id === C.slider.category);
+  const items = cat ? shuffle(cat.items) : [];
+  if (!items.length) { $('#slider').innerHTML = ''; return; }
+
+  slideCount = items.length;
+  slideIdx = 0;
+  $('#slider').innerHTML = `
+    <h2>${esc(C.slider.title)}</h2>
+    <div class="slides">
+      ${items.map(it => `
+        <article class="slide">
+          <div class="eyebrow">${esc(cat.label)}</div>
+          <div class="t">${esc(it.title)}</div>
+          ${it.sub ? `<div class="d">${esc(it.sub)}</div>` : `<div class="d">${esc(C.slider.text)}</div>`}
+          <div class="row">
+            <div class="pr">${priceHtml(it, it.unit)}</div>
+            <a class="go" href="${esc(it.link || C.bot)}" target="_blank" rel="noopener">${esc(it.cta || cat.cta || 'خرید در ربات')}</a>
+          </div>
+        </article>`).join('')}
+    </div>
+    <div class="ctrl">
+      <button class="pp" id="pp" type="button" aria-label="توقف یا پخش">❚❚</button>
+      <div class="dots">
+        ${items.map((_, i) => `<button class="dot" type="button" data-i="${i}" aria-label="اسلاید ${fa(i + 1)}"></button>`).join('')}
+      </div>
+    </div>`;
+
+  showSlide(0);
+  startSlider();
+}
+
+$('#slider').addEventListener('click', e => {
+  if (e.target.closest('#pp')) {
+    paused = !paused;
+    e.target.closest('#pp').textContent = paused ? '▶' : '❚❚';
+    startSlider();
+    return;
+  }
+  const dot = e.target.closest('.dot');
+  if (dot) {
+    showSlide(Number(dot.dataset.i));
+    startSlider();
+  }
+});
+
+/* ---------- ساخت بخش‌ها ---------- */
+function setStatic() {
+  document.title = C.brand.name + ' ' + C.brand.sub;
+  $('#logo').src = C.logo;
+  $('#brand').innerHTML = `${esc(C.brand.name)} <span>${esc(C.brand.sub)}</span>`;
+  $('#cta').href = C.bot;
+  $('#hero-title').textContent = C.hero.title;
+  $('#hero-text').textContent = C.hero.text;
+  $('#hero-badges').innerHTML = C.hero.badges.map(b => `<span>${esc(b)}</span>`).join('');
+  $('#footer-text').textContent = C.footerText;
+  $('#footer-links').innerHTML = C.footerLinks
+    .map(l => `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.label)}</a>`)
+    .join(' &nbsp;·&nbsp; ');
+}
+
+function renderDock() {
+  $('#dock').innerHTML = C.dock.map((d, i) => {
+    const cls = d.main ? 'main' : '';
+    const inner = `<span class="ico">${esc(d.icon)}</span><span>${esc(d.label)}</span>`;
+    if (d.panel) {
+      return `<button type="button" class="${cls}" data-panel="${i}">${inner}</button>`;
+    }
+    const ext = d.link.startsWith('#') ? '' : 'target="_blank" rel="noopener"';
+    return `<a href="${esc(d.link)}" class="${cls}" ${ext}>${inner}</a>`;
+  }).join('');
 }
 
 function renderTabs() {
-  const tabs = [
-    { id: "all", label: "همه‌ی محصولات" },
-    { id: "vpn", label: "🛡 فیلترشکن" },
-    { id: "gift", label: "🎁 گیفت" }
-  ];
-  const nav = document.getElementById("tabs");
-  nav.innerHTML = tabs.map(t =>
-    `<button type="button" data-id="${t.id}" aria-pressed="${t.id === current}">${t.label}</button>`
-  ).join("");
-  nav.onclick = (e) => {
-    const btn = e.target.closest("button[data-id]");
-    if (!btn) return;
-    current = btn.dataset.id;
-    renderTabs();
-    render();
-  };
+  const tabs = [{ id: 'all', label: 'همه‌ی محصولات' }, ...C.categories.map(c => ({ id: c.id, label: c.label }))];
+  $('#tabs').innerHTML = tabs.map(t =>
+    `<button type="button" data-id="${esc(t.id)}" aria-pressed="${t.id === current}">${esc(t.label)}</button>`
+  ).join('');
 }
 
-// لینک‌های t.me داخل خود تلگرام باز شوند
-document.addEventListener('click', (e) => {
+function card(it, cat) {
+  const link = it.link || C.bot;
+  return `
+    <article class="card">
+      ${it.badge ? `<span class="badge">${esc(it.badge)}</span>` : ''}
+      <div class="title">${esc(it.title)}</div>
+      ${it.sub ? `<div class="sub">${esc(it.sub)}</div>` : ''}
+      <div class="price">${priceHtml(it, it.unit)}</div>
+      <a class="buy" href="${esc(link)}" target="_blank" rel="noopener">${esc(it.cta || cat.cta || 'خرید در ربات')}</a>
+    </article>`;
+}
+
+function renderCatalog() {
+  const q = $('#q').value.trim().toLowerCase();
+  let html = '';
+  for (const c of C.categories) {
+    if (current !== 'all' && current !== c.id) continue;
+    const items = c.items.filter(it =>
+      !q || (it.title + ' ' + (it.sub || '')).toLowerCase().includes(q));
+    if (!items.length) continue;
+    html += `
+      <section class="group" id="${esc(c.id)}">
+        <h2>${esc(c.label)}</h2>
+        ${c.note ? `<p class="note">${esc(c.note)}</p>` : ''}
+        <div class="grid">${items.map(it => card(it, c)).join('')}</div>
+      </section>`;
+  }
+  $('#catalog').innerHTML = html || `<p class="empty">${esc(C.emptyText)}</p>`;
+}
+
+/* ---------- پنل ---------- */
+function openPanel(i) {
+  const p = C.dock[i].panel;
+  $('#sheet-title').textContent = p.title;
+  $('#sheet-text').textContent = p.text;
+  $('#sheet-btns').innerHTML = p.buttons.map(b =>
+    `<a class="sbtn" href="${esc(b.link)}" target="_blank" rel="noopener">${esc(b.label)}</a>`
+  ).join('');
+  $('#sheet').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function closePanel() {
+  $('#sheet').hidden = true;
+  document.body.style.overflow = '';
+}
+
+/* ---------- رویدادها ---------- */
+$('#dock').addEventListener('click', e => {
+  const b = e.target.closest('button[data-panel]');
+  if (b) openPanel(Number(b.dataset.panel));
+});
+
+$('#sheet').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) closePanel();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('#sheet').hidden) closePanel();
+});
+
+$('#tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-id]');
+  if (!btn) return;
+  current = btn.dataset.id;
+  renderTabs();
+  renderCatalog();
+});
+
+$('#q').addEventListener('input', renderCatalog);
+
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('vexon-theme', t); } catch (e) {}
+  $('#theme').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+$('#theme').addEventListener('click', () =>
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+/* لینک‌های t.me داخل خود تلگرام باز شوند */
+const tg = window.Telegram && window.Telegram.WebApp;
+document.addEventListener('click', e => {
   const a = e.target.closest('a[href^="https://t.me/"]');
-  const tg = window.Telegram && window.Telegram.WebApp;
   if (!a || !tg || !tg.openTelegramLink) return;
   e.preventDefault();
   tg.openTelegramLink(a.href);
 });
 
-// هماهنگ با رنگ تلگرام و باز شدن تمام‌صفحه
-const tgApp = window.Telegram && window.Telegram.WebApp;
-if (tgApp) { tgApp.ready(); tgApp.expand(); }
+/* لینک‌های داخلی (#top) نرم اسکرول شوند */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href="#top"]');
+  if (!a) return;
+  e.preventDefault();
+  closePanel();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
+if (tg) { tg.ready(); tg.expand(); }
+
+/* ---------- شروع ---------- */
+setStatic();
+applyTheme(document.documentElement.dataset.theme);
+renderSlider();
+renderDock();
 renderTabs();
-render();
+renderCatalog();
 </script>
 </body>
 </html>
