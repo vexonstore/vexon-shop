@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>فروشگاه VEXON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* طرح: آبی الکتریکی روی زمینه‌ی تیره، با کارت‌های شیشه‌ای و شبکه‌ی قیمت */
+:root {
+  --bg: #f3f7ff;
+  --surface: #ffffff;
+  --fg: #0b1733;
+  --muted: #5b6b8c;
+  --accent: #1f5bdc;
+  --accent-2: #14c4e8;
+  --line: #d9e3f7;
+  --chip: #e8efff;
+  --shadow: 0 10px 30px rgba(20, 60, 160, .12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #07102a;
+    --surface: #0e1d44;
+    --fg: #eef4ff;
+    --muted: #9fb3d9;
+    --accent: #3d7bff;
+    --accent-2: #2fd8f5;
+    --line: #20356b;
+    --chip: #14295a;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #07102a;
+  --surface: #0e1d44;
+  --fg: #eef4ff;
+  --muted: #9fb3d9;
+  --accent: #3d7bff;
+  --accent-2: #2fd8f5;
+  --line: #20356b;
+  --chip: #14295a;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: linear-gradient(color-mix(in srgb, var(--bg) 90%, transparent), color-mix(in srgb, var(--bg) 90%, transparent)), url("logo.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--fg);
+  font-family: "Vazirmatn", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.9;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px;
+}
+img { max-width: 100%; }
+.wrap { max-width: 980px; margin: 0 auto; }
+
+header.top {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px 0;
+}
+.logo { display: block; width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
+.brand { font-weight: 900; font-size: 20px; letter-spacing: .5px; color: var(--accent); }
+.brand span { color: var(--accent-2); }
+.top a.cta-small {
+  color: #fff; background: var(--accent); text-decoration: none;
+  padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;
+}
+
+.hero {
+  position: relative; overflow: hidden;
+  border-radius: 24px; padding: 34px 24px; margin: 6px 0 22px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 8px; font-size: 26px; font-weight: 900; line-height: 1.5; text-wrap: balance; }
+.hero p { margin: 0 0 16px; opacity: .92; max-width: 60ch; }
+.hero .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.hero .badges span {
+  background: rgba(255,255,255,.18); padding: 4px 12px; border-radius: 999px; font-size: 13px;
+}
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+nav.tabs button {
+  font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
+  background: var(--chip); color: var(--fg); border: 1px solid var(--line);
+  padding: 8px 16px; border-radius: 999px;
+}
+nav.tabs button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+nav.tabs button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+section.group { margin: 0 0 26px; }
+section.group > h2 {
+  font-size: 18px; font-weight: 900; margin: 0 0 12px; text-wrap: balance;
+}
+section.group > p.note { margin: -6px 0 14px; color: var(--muted); font-size: 14px; }
+
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0;
+  box-shadow: var(--shadow);
+}
+.card .title { font-weight: 700; line-height: 1.7; min-width: 0; overflow-wrap: anywhere; }
+.card .sub { color: var(--muted); font-size: 13px; }
+.card .price { margin-top: auto; font-weight: 900; font-size: 18px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.card .price small { font-weight: 500; font-size: 12px; color: var(--muted); }
+.card a.buy {
+  display: block; text-align: center; text-decoration: none; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+  padding: 10px; border-radius: 12px;
+}
+.card a.buy:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+.plans { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.plan-term { font-weight: 900; font-size: 16px; margin: 4px 0 0; color: var(--accent-2); }
+
+footer.bottom {
+  margin-top: 34px; padding: 22px 0 0; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 14px;
+}
+footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none; }
+
+.empty { color: var(--muted); padding: 20px 0; }
+[hidden] { display: none !important; }
+
+/* نوار پایین شناور، مثل نوار پیام تلگرام */
+.dock {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  max-width: 760px; margin: 0 auto;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: var(--shadow); z-index: 20;
+}
+.dock-pill {
+  flex: none; display: flex; align-items: center; gap: 6px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 14px; white-space: nowrap;
+  padding: 10px 16px; border-radius: 999px;
+}
+.dock-icons {
+  flex: 1; min-width: 0; display: flex; justify-content: space-around; align-items: center;
+}
+.dock-ico-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent;
+  color: var(--muted); font-size: 19px; cursor: pointer;
+  display: grid; place-items: center; text-decoration: none;
+}
+.dock-ico-btn:hover { background: var(--chip); }
+.dock-round {
+  flex: none; width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center; text-decoration: none; font-size: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+}
+.dock a:focus-visible, .dock button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .card { transition: transform .15s ease; }
+  .card:hover { transform: translateY(-2px); }
+}
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="icon" href="logo.png">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img class="logo" src="logo.png" alt="VEXON STORE" width="44" height="44">
+    <a class="cta-small" href="https://t.me/VEXONXBot" target="_blank" rel="noopener">ورود به ربات</a>
+  </header>
+
+  <section class="hero" aria-label="معرفی">
+    <h1>فروشگاه دیجیتال VEXON</h1>
+    <p>فیلترشکن با اشتراک نامحدود و گیفت‌های تلگرامی، با تحویل سریع. سفارش و پرداخت از داخل ربات انجام می‌شود.</p>
+    <div class="badges">
+      <span>تحویل سریع</span>
+      <span>پشتیبانی در ربات</span>
+      <span>پرداخت کارت به کارت</span>
+    </div>
+  </section>
+
+  <nav class="tabs" aria-label="دسته‌ها" id="tabs"></nav>
+
+  <main id="catalog"></main>
+
+  <footer class="bottom">
+    <div>© VEXON STORE</div>
+    <div>
+      <a href="https://t.me/VEXONX_Stor" target="_blank" rel="noopener">کانال فروشگاه</a>
+      &nbsp;·&nbsp;
+      <a href="https://t.me/VEXONXBot" target="_blank" rel="noopener">ربات فروشگاه</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+const BOT = "https://t.me/VEXONXBot";
+
+const CATALOG = [
+  { key: "vpn", label: "🛡 خرید فیلترشکن", type: "vpn" },
+  { key: "gift", label: "🎁 فروش گیفت", type: "gift" }
+];
+
+const VPN_PLANS = [
+  { term: "🗓 یک‌ماهه", users: 2, price: 210 },
+  { term: "🗓 یک‌ماهه", users: 3, price: 228 },
+  { term: "🗓 دوماهه", users: 1, price: 295 },
+  { term: "🗓 دوماهه", users: 2, price: 310 },
+  { term: "🗓 دوماهه", users: 3, price: 329 }
+];
+
+const GIFTS = [
+  { name: "گیفت عروسک خرس 🧸", price: 99 },
+  { name: "گیفت قلب بنفش 💝", price: 99 },
+  { name: "گیفت کادو / هدیه 🎁", price: 135 },
+  { name: "گیفت گل 🌹", price: 135 },
+  { name: "گیفت کیک تولد 🎂", price: 255 },
+  { name: "گیفت دسته گل 💐", price: 255 },
+  { name: "گیفت موشک 🚀", price: 255 },
+  { name: "گیفت شامپاین 🍾", price: 255 },
+  { name: "گیفت انگشتر 💍", price: 485 },
+  { name: "گیفت الماس 💎", price: 485 },
+  { name: "گیفت جام / کاپ 🏆", price: 485 }
+];
+
+const fa = (n) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const money = (thousand) => fa(thousand) + ' <small>هزار تومان</small>';
+
+function vpnSection() {
+  const cards = VPN_PLANS.map(p => `
+    <article class="card">
+      <div class="title">${p.term}</div>
+      <div class="sub">${fa(p.users)} کاربر · نامحدود</div>
+      <div class="price">${money(p.price)}</div>
+      <a class="buy" href="${BOT}" target="_blank" rel="noopener">🛒 خرید در ربات</a>
+    </article>`).join("");
+  return `
+    <section class="group" id="vpn">
+      <h2>🛡 خرید فیلترشکن</h2>
+      <p class="note">اشتراک نامحدود؛ انتخاب مدت و تعداد کاربر</p>
+      <div class="grid plans">${cards}</div>
+    </section>`;
+}
+
+function giftSection() {
+  const cards = GIFTS.map(g => `
+    <article class="card">
+      <div class="title">${g.name}</div>
+      <div class="price">${money(g.price)}</div>
+      <a class="buy" href="${BOT}" target="_blank" rel="noopener">🎁 خرید در ربات</a>
+    </article>`).join("");
+  return `
+    <section class="group" id="gift">
+      <h2>🎁 فروش گیفت</h2>
+      <p class="note">گیفت به کانال یا گروه مورد نظر شما ارسال می‌شود</p>
+      <div class="grid">${cards}</div>
+    </section>`;
+}
+
+const SECTIONS = { all: [vpnSection, giftSection], vpn: [vpnSection], gift: [giftSection] };
+let current = "all";
+
+function render() {
+  document.getElementById("catalog").innerHTML = SECTIONS[current].map(fn => fn()).join("");
+}
+
+function renderTabs() {
+  const tabs = [
+    { id: "all", label: "همه‌ی محصولات" },
+    { id: "vpn", label: "🛡 فیلترشکن" },
+    { id: "gift", label: "🎁 گیفت" }
+  ];
+  const nav = document.getElementById("tabs");
+  nav.innerHTML = tabs.map(t =>
+    `<button type="button" data-id="${t.id}" aria-pressed="${t.id === current}">${t.label}</button>`
+  ).join("");
+  nav.onclick = (e) => {
+    const btn = e.target.closest("button[data-id]");
+    if (!btn) return;
+    current = btn.dataset.id;
+    renderTabs();
+    render();
+  };
+}
+
+// لینک‌های t.me داخل خود تلگرام باز شوند
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="https://t.me/"]');
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (!a || !tg || !tg.openTelegramLink) return;
+  e.preventDefault();
+  tg.openTelegramLink(a.href);
+});
+
+// هماهنگ با رنگ تلگرام و باز شدن تمام‌صفحه
+const tgApp = window.Telegram && window.Telegram.WebApp;
+if (tgApp) { tgApp.ready(); tgApp.expand(); }
+
+renderTabs();
+render();
+</script>
+</body>
+</html>
