@@ -51,7 +51,11 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: linear-gradient(color-mix(in srgb, var(--bg) 90%, transparent), color-mix(in srgb, var(--bg) 90%, transparent)), url("logo.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--fg);
   font-family: "Vazirmatn", system-ui, sans-serif;
   font-size: 15px;
@@ -67,6 +71,7 @@ header.top {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 18px 0;
 }
+.logo { display: block; width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
 .brand { font-weight: 900; font-size: 20px; letter-spacing: .5px; color: var(--accent); }
 .brand span { color: var(--accent-2); }
 .top a.cta-small {
@@ -170,11 +175,12 @@ footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none;
 }
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="icon" href="logo.png">
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand">VEXON <span>STORE</span></div>
+    <img class="logo" src="logo.png" alt="VEXON STORE" width="44" height="44">
     <a class="cta-small" href="https://t.me/VEXONXBot" target="_blank" rel="noopener">ورود به ربات</a>
   </header>
 
