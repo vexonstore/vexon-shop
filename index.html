@@ -30,6 +30,7 @@
   --shadow: 0 14px 30px -16px rgba(20, 60, 160, .28);
   --glow1: rgba(20, 196, 232, .35);
   --glow2: rgba(31, 91, 220, .25);
+  --sq: rgba(31, 91, 220, .09);
   --spot: rgba(255, 255, 255, .7);       /* نور روی کارت‌ها */
   /* شیشه‌ای */
   --glass: rgba(255, 255, 255, .42);
@@ -54,6 +55,7 @@
   --shadow: 0 14px 30px -16px rgba(0, 0, 0, .6);
   --glow1: rgba(47, 216, 245, .22);
   --glow2: rgba(61, 123, 255, .25);
+  --sq: rgba(255, 255, 255, .06);
   --spot: rgba(47, 216, 245, .18);
   --glass: rgba(255, 255, 255, .06);
   --glass-line: rgba(255, 255, 255, .16);
@@ -92,9 +94,12 @@ body {
   line-height: 1.7;
   color: var(--fg);
   background:
+    linear-gradient(var(--sq) 1px, transparent 1px),
+    linear-gradient(90deg, var(--sq) 1px, transparent 1px),
     radial-gradient(600px 360px at 92% -10%, var(--glow1), transparent 60%),
     radial-gradient(520px 360px at -10% 12%, var(--glow2), transparent 60%),
     var(--bg);
+  background-size: 42px 42px, 42px 42px, auto, auto, auto;
   background-attachment: fixed;
   padding: 12px 12px 110px;
   overflow-x: hidden;
@@ -145,16 +150,12 @@ header.top {
   background-size: 250% auto;
   -webkit-background-clip: text; background-clip: text;
   color: transparent; -webkit-text-fill-color: transparent;
-  animation: shine 4s linear infinite, glow 2.6s ease-in-out infinite;
+  animation: shine 4s linear infinite;
 }
 .brand span { color: inherit; -webkit-text-fill-color: transparent; }
 @keyframes shine {
   from { background-position: 100% center; }
   to   { background-position: -150% center; }
-}
-@keyframes glow {
-  0%, 100% { filter: drop-shadow(0 0 3px var(--glow1)); }
-  50%      { filter: drop-shadow(0 0 10px var(--accent-2)) drop-shadow(0 0 2px var(--accent-2)); }
 }
 
 .actions { display: flex; align-items: center; gap: 6px; flex: none; }
@@ -176,6 +177,15 @@ header.top {
   border-radius: 20px; padding: 20px 18px; margin: 2px 0 14px;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #fff; box-shadow: var(--shadow);
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .14) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 90%);
+          mask-image: linear-gradient(180deg, #000, transparent 90%);
 }
 .hero::after {
   content: ""; position: absolute; z-index: -1; width: 180px; height: 180px; border-radius: 50%;
