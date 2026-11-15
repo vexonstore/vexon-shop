@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="فروشگاه دیجیتال VEXON: فیلترشکن با اشتراک نامحدود، گیفت تلگرام، استارز، تلگرام پرمیوم و اکانت‌های اشتراکی با تحویل سریع از داخل ربات.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#1f5bdc">
+<meta property="og:title" content="فروشگاه دیجیتال VEXON">
+<meta property="og:description" content="فیلترشکن، گیفت تلگرام، استارز، پرمیوم و اکانت‌های اشتراکی با تحویل سریع از داخل ربات.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fa_IR">
 <title>VEXON STORE</title>
 <link rel="icon" href="logo.png">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -471,6 +478,50 @@ nav.tabs   { animation-delay: .45s; }
   .brand { font-size: 15px; }
   .dock a, .dock button { font-size: 10px; }
 }
+
+/* ===== بخش‌های تازه: صفحه‌ی اصلی، مزایا، سؤالات متداول، صفحات محتوایی ===== */
+.soon { font-size: 12px; font-weight: 700; color: var(--muted); }
+.feats { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.feat {
+  min-width: 0; background: linear-gradient(160deg, var(--glass-shine), var(--glass));
+  border: 1px solid var(--glass-line); border-radius: 16px; padding: 14px 12px;
+  backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
+  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, .3), inset 0 1px 0 var(--glass-shine);
+}
+.fi { font-size: 22px; line-height: 1.2; }
+.ft { font-weight: 900; font-size: 14px; margin: 6px 0 2px; }
+.fd { color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+.faq { display: grid; gap: 8px; }
+.faq details {
+  background: var(--glass); border: 1px solid var(--glass-line); border-radius: 14px;
+  padding: 12px 14px; backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+.faq summary { cursor: pointer; font-weight: 700; font-size: 14px; line-height: 1.6; }
+.faq details p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+.pagebox {
+  background: linear-gradient(160deg, var(--glass-shine), var(--glass)); border: 1px solid var(--glass-line);
+  border-radius: 20px; padding: 18px 16px;
+  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, .3), inset 0 1px 0 var(--glass-shine);
+  backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
+}
+.pagebox h1 { font-size: 20px; font-weight: 900; margin: 0 0 10px; }
+.pagebox h3 { font-size: 15px; font-weight: 900; margin: 0 0 4px; }
+.pagebox p { font-size: 14px; line-height: 1.9; margin: 0 0 10px; }
+.pagebox .sbtn { display: inline-block; margin: 6px 6px 0 0; padding: 9px 16px; }
+.pagebox .faq { margin-top: 6px; }
+.post { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+.back { display: inline-block; margin-top: 16px; font-weight: 700; color: var(--accent); text-decoration: none; }
+@media (min-width: 640px) {
+  .feats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .fi { font-size: 26px; }
+  .ft { font-size: 16px; }
+  .fd { font-size: 14px; }
+  .pagebox { padding: 28px 26px; border-radius: 26px; }
+  .pagebox h1 { font-size: 26px; }
+  .pagebox p { font-size: 15px; }
+  .faq summary { font-size: 15px; }
+  .faq details p { font-size: 14px; }
+}
 </style>
 </head>
 <body>
@@ -484,6 +535,9 @@ nav.tabs   { animation-delay: .45s; }
   badge اختیاری است؛ اگر نمی‌خواهید، آن خط را حذف کنید.
   old (قیمت قبل از تخفیف) اختیاری است؛ اگر بنویسید، خط‌خورده نمایش داده می‌شود.
   slider.category: id دسته‌ای که اسلایدر زیر کادر معرفی از آن ساخته می‌شود.
+  tags روی آیتم: "bestseller" (پرفروش)، "new" (جدید)، "featured" (منتخب). آیتمی که old داشته باشد خودکار در بخش تخفیف‌دار می‌آید.
+  testimonials: فقط نظر واقعی مشتریان؛ نظر ساختگی نگذارید. خالی باشد، بخش نمایش داده نمی‌شود.
+  pages: متن صفحات محتوایی. هر صفحه با آدرس #p/کلید باز می‌شود.
   دکمه‌های پایین: هر آیتم dock که "panel" دارد، با زدن، پنل باز می‌کند
   و دکمه‌های داخل panel.buttons به لینک‌ها می‌روند.
 -->
@@ -512,7 +566,7 @@ nav.tabs   { animation-delay: .45s; }
         { "title": "🗓 یک‌ماهه", "sub": "۲ کاربر · نامحدود", "price": 210 },
         { "title": "🗓 یک‌ماهه", "sub": "۳ کاربر · نامحدود", "price": 228, "old": 260, "badge": "تخفیف" },
         { "title": "🗓 دوماهه", "sub": "۱ کاربر · نامحدود", "price": 295 },
-        { "title": "🗓 دوماهه", "sub": "۲ کاربر · نامحدود", "price": 310, "old": 350, "badge": "پرفروش" },
+        { "title": "🗓 دوماهه", "sub": "۲ کاربر · نامحدود", "price": 310, "old": 350, "badge": "پرفروش", "tags": ["bestseller"] },
         { "title": "🗓 دوماهه", "sub": "۳ کاربر · نامحدود", "price": 329 }
       ]
     },
@@ -528,11 +582,65 @@ nav.tabs   { animation-delay: .45s; }
         { "title": "گیفت گل 🌹", "price": 135 },
         { "title": "گیفت کیک تولد 🎂", "price": 255, "old": 290, "badge": "تخفیف" },
         { "title": "گیفت دسته گل 💐", "price": 255 },
-        { "title": "گیفت موشـک 🚀", "price": 255 },
+        { "title": "گیفت موشک 🚀", "price": 255 },
         { "title": "گیفت شامپاین 🍾", "price": 255 },
-        { "title": "گیفت انگشتر 💍", "price": 485, "badge": "ویژه" },
-        { "title": "گیفت الماس 💎", "price": 485 },
+        { "title": "گیفت انگشتر 💍", "price": 485, "badge": "ویژه", "tags": ["featured"] },
+        { "title": "گیفت الماس 💎", "price": 485, "tags": ["featured"] },
         { "title": "گیفت جام / کاپ 🏆", "price": 485 }
+      ]
+    },
+    {
+      "id": "stars",
+      "label": "⭐ تلگرام استارز",
+      "note": "خرید استارز تلگرام؛ تعداد را از داخل ربات انتخاب کنید",
+      "cta": "⭐ خرید در ربات",
+      "items": [
+        { "title": "۵۰ استارز", "price": null },
+        { "title": "۱۰۰ استارز", "price": null },
+        { "title": "۲۵۰ استارز", "price": null, "tags": ["new"] },
+        { "title": "۵۰۰ استارز", "price": null },
+        { "title": "۱۰۰۰ استارز", "price": null }
+      ]
+    },
+    {
+      "id": "ai",
+      "label": "🤖 اکانت هوش مصنوعی",
+      "note": "اشتراک اکانت‌های هوش مصنوعی؛ انتخاب مدت از داخل ربات",
+      "cta": "🤖 خرید در ربات",
+      "items": [
+        { "title": "اشتراک یک‌ماهه", "sub": "اکانت اشتراکی", "price": null },
+        { "title": "اشتراک سه‌ماهه", "sub": "اکانت اشتراکی", "price": null, "tags": ["new"] }
+      ]
+    },
+    {
+      "id": "spotify",
+      "label": "🎧 اکانت Spotify Premium",
+      "note": "اکانت اشتراکی Spotify Premium؛ انتخاب مدت از داخل ربات",
+      "cta": "🎧 خرید در ربات",
+      "items": [
+        { "title": "اشتراک یک‌ماهه", "sub": "اکانت اشتراکی", "price": null },
+        { "title": "اشتراک سه‌ماهه", "sub": "اکانت اشتراکی", "price": null, "tags": ["new"] }
+      ]
+    },
+    {
+      "id": "soundcloud",
+      "label": "☁️ اکانت SoundCloud",
+      "note": "اکانت اشتراکی SoundCloud؛ انتخاب مدت از داخل ربات",
+      "cta": "☁️ خرید در ربات",
+      "items": [
+        { "title": "اشتراک یک‌ماهه", "sub": "اکانت اشتراکی", "price": null },
+        { "title": "اشتراک سه‌ماهه", "sub": "اکانت اشتراکی", "price": null }
+      ]
+    },
+    {
+      "id": "premium",
+      "label": "💎 تلگرام پرمیوم",
+      "note": "اشتراک تلگرام پرمیوم؛ انتخاب مدت از داخل ربات",
+      "cta": "💎 خرید در ربات",
+      "items": [
+        { "title": "پرمیوم یک‌ماهه", "price": null },
+        { "title": "پرمیوم سه‌ماهه", "price": null, "tags": ["new"] },
+        { "title": "پرمیوم یک‌ساله", "price": null }
       ]
     }
   ],
@@ -575,9 +683,94 @@ nav.tabs   { animation-delay: .45s; }
   ],
   "footerText": "© VEXON STORE",
   "footerLinks": [
+    { "label": "درباره ما", "link": "#p/about" },
+    { "label": "تماس با ما", "link": "#p/contact" },
+    { "label": "راهنمای خرید", "link": "#p/guide" },
+    { "label": "سؤالات متداول", "link": "#p/faq" },
+    { "label": "قوانین و مقررات", "link": "#p/terms" },
+    { "label": "حریم خصوصی", "link": "#p/privacy" },
+    { "label": "شرایط بازگشت وجه", "link": "#p/refund" },
+    { "label": "ضمانت محصولات", "link": "#p/warranty" },
+    { "label": "وبلاگ", "link": "#p/blog" },
     { "label": "کانال فروشگاه", "link": "https://t.me/VEXONX_Stor" },
     { "label": "ربات فروشگاه", "link": "https://t.me/VEXONXBot" }
   ],
+  "advantages": [
+    { "icon": "⚡", "title": "تحویل سریع", "text": "سفارش شما پس از تأیید پرداخت، از داخل ربات تحویل داده می‌شود." },
+    { "icon": "💬", "title": "پشتیبانی در ربات", "text": "برای سؤال یا پیگیری سفارش، از طریق پشتیبانی در تماس باشید." },
+    { "icon": "💳", "title": "پرداخت آسان", "text": "پرداخت کارت به کارت از داخل ربات انجام می‌شود." },
+    { "icon": "∞", "title": "اشتراک نامحدود", "text": "اشتراک‌های نامحدود با انتخاب مدت و تعداد کاربر." }
+  ],
+  "testimonials": [],
+  "faq": [
+    { "q": "چطور خرید کنم؟", "a": "محصول موردنظرتان را انتخاب کنید و روی دکمه‌ی «خرید در ربات» بزنید تا وارد ربات فروشگاه شوید. سفارش و پرداخت از داخل ربات انجام می‌شود." },
+    { "q": "پرداخت چطور انجام می‌شود؟", "a": "پرداخت به‌صورت کارت به کارت از داخل ربات انجام می‌شود." },
+    { "q": "بعد از پرداخت، سفارشم کجا تحویل داده می‌شود؟", "a": "سفارش شما پس از تأیید پرداخت، از طریق ربات برای شما ارسال می‌شود." },
+    { "q": "گیفت تلگرام به کجا ارسال می‌شود؟", "a": "گیفت به کانال یا گروه موردنظر شما ارسال می‌شود. آیدی یا لینک مقصد را هنگام سفارش وارد کنید." },
+    { "q": "مشکلی در سفارشم پیش آمد، چه کنم؟", "a": "با پشتیبانی در تلگرام (@Fenadiin) یا از داخل ربات در تماس باشید." }
+  ],
+  "blog": [],
+  "pages": {
+    "about": {
+      "title": "درباره ما",
+      "body": [
+        "VEXON STORE یک فروشگاه دیجیتال است که فیلترشکن، گیفت تلگرام، استارز، تلگرام پرمیوم و اکانت‌های اشتراکی را ارائه می‌دهد.",
+        "هدف ما ارائه‌ی سریع، ساده و قابل‌اعتماد خدمات دیجیتال از داخل ربات تلگرام است."
+      ]
+    },
+    "contact": {
+      "title": "تماس با ما",
+      "body": ["برای پشتیبانی، سؤال یا پیگیری سفارش، از راه‌های زیر با ما در تماس باشید."],
+      "links": [
+        { "label": "پشتیبانی در تلگرام", "link": "https://t.me/Fenadiin" },
+        { "label": "ربات فروشگاه", "link": "https://t.me/VEXONXBot" },
+        { "label": "کانال فروشگاه", "link": "https://t.me/VEXONX_Stor" }
+      ]
+    },
+    "guide": {
+      "title": "راهنمای خرید",
+      "body": [
+        "۱. محصول موردنظرتان را از بخش‌های سایت انتخاب کنید.",
+        "۲. روی دکمه‌ی «خرید در ربات» بزنید تا وارد ربات شوید.",
+        "۳. مشخصات لازم را در ربات وارد کنید؛ مثلاً مدت یا تعداد کاربر، یا آیدی مقصد گیفت.",
+        "۴. پرداخت را به‌صورت کارت به کارت انجام دهید.",
+        "۵. پس از تأیید پرداخت، سفارش شما از طریق ربات تحویل داده می‌شود."
+      ]
+    },
+    "terms": {
+      "title": "قوانین و مقررات",
+      "body": [
+        "با خرید از فروشگاه VEXON، این شرایط را می‌پذیرید.",
+        "ارائه‌ی اطلاعات درست هنگام سفارش، مانند آیدی یا لینک مقصد، بر عهده‌ی خریدار است.",
+        "خریدار متعهد است از خدمات تنها در چارچوب قوانین کشور و قوانین ارائه‌دهنده‌ی سرویس استفاده کند."
+      ]
+    },
+    "privacy": {
+      "title": "حریم خصوصی",
+      "body": [
+        "اطلاعاتی که هنگام سفارش در اختیار ما قرار می‌گیرد، مانند آیدی تلگرام و آیدی مقصد، فقط برای انجام و پیگیری سفارش استفاده می‌شود.",
+        "برای هرگونه پرسش درباره‌ی اطلاعات خود، با پشتیبانی در تماس باشید."
+      ]
+    },
+    "refund": {
+      "title": "شرایط بازگشت وجه",
+      "body": [
+        "محصولات دیجیتال و گیفت‌ها پس از ارسال یا فعال‌سازی، قابل بازگشت نیستند.",
+        "اگر سفارش شما به هر دلیل تحویل داده نشد، با پشتیبانی تماس بگیرید تا بررسی و در صورت تأیید، تحویل مجدد یا بازگشت وجه انجام شود."
+      ]
+    },
+    "warranty": {
+      "title": "ضمانت محصولات",
+      "body": [
+        "اگر محصول تحویل‌داده‌شده دچار مشکل فنی شد، با پشتیبانی تماس بگیرید.",
+        "مدت و شرایط ضمانت هر محصول، در ربات اعلام می‌شود."
+      ]
+    },
+    "blog": {
+      "title": "وبلاگ",
+      "body": ["مطالب آموزشی و اخبار فروشگاه به‌زودی در این بخش منتشر می‌شود."]
+    }
+  },
   "emptyText": "موردی پیدا نشد"
 }
 </script>
@@ -600,10 +793,14 @@ nav.tabs   { animation-delay: .45s; }
   </section>
 
   <section class="slider" id="slider" aria-label="پیشنهادهای ویژه"></section>
+  <div id="home-top"></div>
 
   <input class="search" id="q" type="search" placeholder="جستجوی محصول…" aria-label="جستجوی محصول">
   <nav class="tabs" aria-label="دسته‌ها" id="tabs"></nav>
   <main id="catalog"></main>
+
+  <section id="page" hidden></section>
+  <div id="home-bottom"></div>
 
   <footer class="bottom">
     <div id="footer-text"></div>
@@ -626,7 +823,7 @@ nav.tabs   { animation-delay: .45s; }
 </div>
 
 <script>
-const C = JSON.parse(document.getElementById('site-content').textContent);
+let C = JSON.parse(document.getElementById('site-content').textContent);
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -636,7 +833,7 @@ let current = 'all';
 
 /* ---------- قیمت (با قیمت قبل از تخفیف خط‌خورده) ---------- */
 function priceHtml(it, unit) {
-  if (it.price == null) return '';
+  if (it.price == null) return '<span class="soon">به‌زودی</span>';
   const old = it.old != null ? `<s class="old">${fa(it.old)}</s>` : '';
   return `${old}${fa(it.price)} <small>${esc(unit || C.currency)}</small>`;
 }
@@ -765,7 +962,7 @@ function setStatic() {
   $('#hero-badges').innerHTML = C.hero.badges.map(b => `<span>${esc(b)}</span>`).join('');
   $('#footer-text').textContent = C.footerText;
   $('#footer-links').innerHTML = C.footerLinks
-    .map(l => `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.label)}</a>`)
+    .map(l => `<a href="${esc(l.link)}"${l.link.startsWith('#') ? '' : ' target="_blank" rel="noopener"'}>${esc(l.label)}</a>`)
     .join(' &nbsp;·&nbsp; ');
 }
 
@@ -816,6 +1013,115 @@ function renderCatalog() {
       </section>`;
   }
   $('#catalog').innerHTML = html || `<p class="empty">${esc(C.emptyText)}</p>`;
+  updateHome();
+}
+
+/* ---------- بخش‌های صفحه‌ی اصلی ---------- */
+function homeBlocks() {
+  const all = C.categories.flatMap(c => c.items.map(it => ({ it, cat: c })));
+  const blocks = [
+    { title: '🔥 پرفروش‌ترین‌ها', pick: x => (x.it.tags || []).includes('bestseller') },
+    { title: '🆕 محصولات جدید', pick: x => (x.it.tags || []).includes('new') },
+    { title: '🏷 محصولات تخفیف‌دار', pick: x => x.it.old != null },
+    { title: '⭐ محصولات منتخب', pick: x => (x.it.tags || []).includes('featured') }
+  ];
+  return blocks.map(b => {
+    const list = all.filter(b.pick);
+    if (!list.length) return '';
+    return `
+      <section class="group home-block">
+        <h2>${esc(b.title)}</h2>
+        <div class="grid">${list.map(x => card(x.it, x.cat)).join('')}</div>
+      </section>`;
+  }).join('');
+}
+
+function advantagesHtml() {
+  const list = C.advantages || [];
+  if (!list.length) return '';
+  return `
+    <section class="group">
+      <h2>✨ مزایای فروشگاه</h2>
+      <div class="feats">${list.map(a => `
+        <div class="feat">
+          <div class="fi">${esc(a.icon)}</div>
+          <div class="ft">${esc(a.title)}</div>
+          <div class="fd">${esc(a.text)}</div>
+        </div>`).join('')}</div>
+    </section>`;
+}
+
+function testimonialsHtml() {
+  const list = C.testimonials || [];
+  if (!list.length) return '';
+  return `
+    <section class="group">
+      <h2>💬 نظرات مشتریان</h2>
+      <div class="grid">${list.map(t => `
+        <article class="card">
+          <div class="title">${esc(t.name)}</div>
+          <div class="sub">${esc(t.date || '')}</div>
+          <div class="sub">${esc(t.text)}</div>
+        </article>`).join('')}</div>
+    </section>`;
+}
+
+function faqList() {
+  const list = C.faq || [];
+  if (!list.length) return '';
+  return `<div class="faq">${list.map(f => `
+    <details>
+      <summary>${esc(f.q)}</summary>
+      <p>${esc(f.a)}</p>
+    </details>`).join('')}</div>`;
+}
+
+function faqHtml() {
+  if (!(C.faq || []).length) return '';
+  return `
+    <section class="group" id="faq">
+      <h2>❓ سؤالات متداول</h2>
+      ${faqList()}
+    </section>`;
+}
+
+function updateHome() {
+  const showHome = current === 'all' && !$('#q').value.trim();
+  $('#home-top').innerHTML = showHome ? homeBlocks() : '';
+  $('#home-bottom').innerHTML = showHome ? advantagesHtml() + testimonialsHtml() + faqHtml() : '';
+}
+
+/* ---------- صفحات محتوایی (آدرس #p/کلید) ---------- */
+const PAGE_PARTS = ['.hero', '#slider', '#q', '#tabs', '#catalog', '#home-top', '#home-bottom'];
+
+function pageHtml(key) {
+  const back = '<a class="back" href="#top">← بازگشت به فروشگاه</a>';
+  if (key === 'faq') {
+    return `<article class="pagebox"><h1>سؤالات متداول</h1>${faqList() || '<p>هنوز سؤالی ثبت نشده است.</p>'}${back}</article>`;
+  }
+  const p = (C.pages || {})[key];
+  if (!p) return `<article class="pagebox"><h1>صفحه پیدا نشد</h1>${back}</article>`;
+  const body = (p.body || []).map(t => `<p>${esc(t)}</p>`).join('');
+  const posts = key === 'blog' ? (C.blog || []).map(b => `
+      <div class="post"><h3>${esc(b.title)}</h3><p>${esc(b.text)}</p></div>`).join('') : '';
+  const links = (p.links || []).map(l =>
+    `<a class="sbtn" href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('');
+  return `<article class="pagebox"><h1>${esc(p.title)}</h1>${body}${posts}${links}${back}</article>`;
+}
+
+function route() {
+  const m = location.hash.match(/^#p\/([\w-]+)/);
+  const page = $('#page');
+  if (!m) {
+    page.hidden = true;
+    page.innerHTML = '';
+    PAGE_PARTS.forEach(sel => { document.querySelector(sel).hidden = false; });
+    return;
+  }
+  PAGE_PARTS.forEach(sel => { document.querySelector(sel).hidden = true; });
+  page.innerHTML = pageHtml(m[1]);
+  page.hidden = false;
+  window.scrollTo({ top: 0 });
 }
 
 /* ---------- پنل ---------- */
@@ -882,10 +1188,61 @@ document.addEventListener('click', e => {
   if (!a) return;
   e.preventDefault();
   closePanel();
+  if (location.hash.startsWith('#p/')) { history.replaceState(null, '', location.pathname + location.search); route(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 if (tg) { tg.ready(); tg.expand(); }
+
+/* ---------- کاتالوج زنده از ربات (اختیاری) ----------
+   اگر آدرس ربات (Web App با ?action=catalog) اینجا گذاشته شود، محصولات و دسته‌ها از شیت خوانده می‌شوند.
+   در غیر این صورت، یا در صورت خطا، همان داده‌ی داخل صفحه نمایش داده می‌شود. */
+const CATALOG_URL = "https://script.google.com/macros/s/AKfycbyeJZgowCaNhK2E1eUQsBhuHmOZOVGQaILDI8F_aXkUL9Ju7hJagzMm_ITy6nqNAfpMpA/exec?action=catalog";
+
+function buildLiveContent(d) {
+  const products = (d.products || []).filter(p => p.inStock !== false);
+  const cats = [];
+  (d.categories || []).forEach((label, i) => {
+    const items = products.filter(p => p.category === label).map(p => ({
+      title: p.name,
+      sub: p.subcategory || '',
+      price: (p.price == null || Number(p.price) <= 0) ? null : Number(p.price)
+    }));
+    if (!items.length) return;
+    const known = C.categories.find(c => c.label === label);
+    cats.push({
+      id: known ? known.id : 'live' + i,
+      label: label,
+      note: known ? known.note : '',
+      cta: known ? known.cta : '🛒 خرید در ربات',
+      items: items
+    });
+  });
+  if (!cats.some(c => c.id === C.slider.category)) return null;
+  return Object.assign({}, C, { categories: cats });
+}
+
+async function loadLiveCatalog() {
+  if (!CATALOG_URL) return;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    const res = await fetch(CATALOG_URL, { cache: 'no-store', signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.ok || !Array.isArray(data.categories)) return;
+    const next = buildLiveContent(data);
+    if (!next) return;
+    C = next;
+    if (typeof current !== 'undefined' && current !== 'all' && !C.categories.some(c => c.id === current)) current = 'all';
+    renderSlider();
+    renderTabs();
+    renderCatalog();
+  } catch (e) {
+    /* خطا: همان داده‌ی داخلی صفحه باقی می‌ماند */
+  }
+}
 
 /* ---------- شروع ---------- */
 setStatic();
@@ -894,6 +1251,9 @@ renderSlider();
 renderDock();
 renderTabs();
 renderCatalog();
+window.addEventListener('hashchange', route);
+route();
+loadLiveCatalog();
 </script>
 </body>
 </html>
