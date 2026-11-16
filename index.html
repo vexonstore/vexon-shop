@@ -546,6 +546,35 @@ h2 svg { color: var(--accent); margin-inline-end: 4px; }
 .fi svg { font-size: 26px; color: var(--accent); }
 .buy svg, .go svg { margin-inline-end: 4px; }
 .dock .ico svg { font-size: 1.15em; }
+/* بنر تبلیغاتی */
+.promo { margin: 16px 0 6px; }
+.promo[hidden] { display: none; }
+.promo-box {
+  position: relative; overflow: hidden; border-radius: 22px; padding: 22px 18px; min-height: 150px;
+  display: flex; align-items: center; justify-content: flex-end;
+  background:
+    radial-gradient(420px 220px at 85% 20%, rgba(168, 85, 247, .55), transparent 60%),
+    radial-gradient(360px 200px at 5% 100%, rgba(59, 130, 246, .45), transparent 60%),
+    linear-gradient(135deg, #1b1038 0%, #2a1b5c 55%, #120c27 100%);
+  background-size: cover; background-position: center;
+  color: #fff;
+  box-shadow: 0 18px 40px -18px rgba(76, 29, 149, .8), inset 0 1px 0 rgba(255, 255, 255, .15);
+}
+.promo-text { max-width: 72%; text-align: start; }
+.promo-title { font-size: 22px; font-weight: 900; letter-spacing: .02em; line-height: 1.4; }
+.promo-sub { font-size: 14px; opacity: .92; margin-top: 4px; line-height: 1.7; }
+.promo-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 16px;
+  border-radius: 999px; color: #fff; font-weight: 800; font-size: 13px; text-decoration: none;
+  background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .35);
+  backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+@media (min-width: 640px) {
+  .promo-box { padding: 36px 40px; min-height: 200px; }
+  .promo-title { font-size: 34px; }
+  .promo-sub { font-size: 16px; }
+  .promo-btn { font-size: 15px; padding: 10px 20px; }
+}
 </style>
 </head>
 <body>
@@ -705,6 +734,13 @@ h2 svg { color: var(--accent); margin-inline-end: 4px; }
       }
     }
   ],
+  "banner": {
+    "enabled": true,
+    "title": "VEXON STORE",
+    "subtitle": "فیلترشکن، گیفت، استارز و اکانت‌های اشتراکی",
+    "button": { "label": "خرید در ربات", "link": "https://t.me/VEXONXBot" },
+    "image": ""
+  },
   "footerText": "© VEXON STORE",
   "footerLinks": [
     { "label": "درباره ما", "link": "#p/about" },
@@ -816,6 +852,7 @@ h2 svg { color: var(--accent); margin-inline-end: 4px; }
     <div class="badges" id="hero-badges"></div>
   </section>
 
+  <section class="promo" id="promo" hidden></section>
   <section class="slider" id="slider" aria-label="پیشنهادهای ویژه"></section>
   <div id="home-top"></div>
 
@@ -988,6 +1025,31 @@ function setStatic() {
   $('#footer-links').innerHTML = C.footerLinks
     .map(l => `<a href="${esc(l.link)}"${l.link.startsWith('#') ? '' : ' target="_blank" rel="noopener"'}>${esc(l.label)}</a>`)
     .join('');
+}
+
+/* ---------- بنر تبلیغاتی ---------- */
+function renderPromo() {
+  const el = $('#promo');
+  const b = C.banner;
+  if (!b || b.enabled === false || (!b.title && !b.image)) {
+    el.hidden = true;
+    el.innerHTML = '';
+    return;
+  }
+  const img = /^https:\/\//.test(b.image || '') ? b.image : '';
+  const style = img ? ` style="background-image:linear-gradient(90deg,rgba(12,8,30,.92),rgba(12,8,30,.35)),url('${esc(img)}')"` : '';
+  const btn = b.button && b.button.label
+    ? `<a class="promo-btn" href="${esc(b.button.link || C.bot)}" target="_blank" rel="noopener">${esc(b.button.label)} ${ICONS.cart}</a>`
+    : '';
+  el.hidden = false;
+  el.innerHTML = `
+    <div class="promo-box"${style}>
+      <div class="promo-text">
+        ${b.title ? `<div class="promo-title">${esc(b.title)}</div>` : ''}
+        ${b.subtitle ? `<div class="promo-sub">${esc(b.subtitle)}</div>` : ''}
+        ${btn}
+      </div>
+    </div>`;
 }
 
 /* ---------- آیکون‌های خطی (جایگزین ایموجی) ---------- */
@@ -1169,7 +1231,7 @@ function updateHome() {
 }
 
 /* ---------- صفحات محتوایی (آدرس #p/کلید) ---------- */
-const PAGE_PARTS = ['.hero', '#slider', '#q', '#tabs', '#catalog', '#home-top', '#home-bottom'];
+const PAGE_PARTS = ['.hero', '#promo', '#slider', '#q', '#tabs', '#catalog', '#home-top', '#home-bottom'];
 
 function pageHtml(key) {
   const back = '<a class="back" href="#top">← بازگشت به فروشگاه</a>';
@@ -1311,6 +1373,7 @@ function applyContent(c) {
   if (Array.isArray(c.advantages)) C.advantages = c.advantages;
   if (Array.isArray(c.footerLinks)) C.footerLinks = c.footerLinks;
   if (Array.isArray(c.blog)) C.blog = c.blog;
+  if (c.banner && typeof c.banner === 'object') C.banner = c.banner;
 }
 
 async function loadLiveCatalog() {
@@ -1329,6 +1392,7 @@ async function loadLiveCatalog() {
       if (typeof current !== 'undefined' && current !== 'all' && !C.categories.some(c => c.id === current)) current = 'all';
     }
     applyContent(data.content);
+    renderPromo();
     renderSlider();
     renderTabs();
     renderCatalog();
@@ -1344,6 +1408,7 @@ setStatic();
 applyTheme(document.documentElement.dataset.theme);
 renderSlider();
 renderDock();
+renderPromo();
 renderTabs();
 renderCatalog();
 window.addEventListener('hashchange', route);
