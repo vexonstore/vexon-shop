@@ -1203,11 +1203,14 @@ function buildLiveContent(d) {
   const products = (d.products || []).filter(p => p.inStock !== false);
   const cats = [];
   (d.categories || []).forEach((label, i) => {
-    const items = products.filter(p => p.category === label).map(p => ({
-      title: p.name,
-      sub: p.subcategory || '',
-      price: (p.price == null || Number(p.price) <= 0) ? null : Number(p.price)
-    }));
+    const items = products.filter(p => p.category === label).map(p => {
+      const price = (p.price == null || Number(p.price) <= 0) ? null : Number(p.price);
+      const old = (p.oldPrice != null && price != null && Number(p.oldPrice) > price) ? Number(p.oldPrice) : null;
+      const out = { title: p.name, sub: p.subcategory || '', price: price };
+      if (old != null) out.old = old;
+      if (Array.isArray(p.tags) && p.tags.length) out.tags = p.tags;
+      return out;
+    });
     if (!items.length) return;
     const known = C.categories.find(c => c.label === label);
     cats.push({
