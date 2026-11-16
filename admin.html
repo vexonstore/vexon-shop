@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>پنل مدیریت محتوای VEXON</title>
+<title>پنل مدیریت VEXON</title>
 <style>
 :root { --bg:#f4f7fc; --card:#fff; --line:#dde4f0; --text:#1d2433; --muted:#6b7385; --accent:#1f5bdc; --ok:#1a7f4b; --err:#b42318; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f1420; --card:#171f30; --line:#2a3550; --text:#e8edf8; --muted:#9aa5bd; --accent:#6ea0ff; --ok:#4ad08a; --err:#ff8a80; } }
@@ -17,24 +17,30 @@ h2 { font-size: 16px; margin: 0 0 8px; }
 section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
 label { display:block; font-weight:700; margin: 10px 0 4px; font-size: 14px; }
 .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 6px; }
-input[type=text], input[type=password], textarea {
+input[type=text], input[type=password], textarea, select {
   width: 100%; border: 1px solid var(--line); background: var(--bg); color: var(--text);
   border-radius: 10px; padding: 9px 10px; font: inherit; font-size: 14px;
 }
 textarea { min-height: 96px; resize: vertical; }
 button { font: inherit; border: 0; border-radius: 12px; padding: 10px 18px; background: var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+button.tab { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+button.tab.on { background: var(--accent); color:#fff; border-color: var(--accent); }
 button:disabled { opacity: .5; cursor: default; }
 .row { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
+.tabs { display:flex; gap:8px; margin-bottom: 12px; flex-wrap: wrap; }
+.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .msg { font-weight:700; font-size: 14px; }
 .msg.ok { color: var(--ok); } .msg.err { color: var(--err); }
 details { border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 8px; }
 summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+.prod { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; }
 .hidden { display: none !important; }
+@media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>پنل مدیریت محتوای سایت VEXON</h1>
+  <h1>پنل مدیریت VEXON</h1>
 
   <section id="login">
     <h2>ورود</h2>
@@ -47,39 +53,68 @@ summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
   </section>
 
   <div id="editor" class="hidden">
-    <section>
-      <h2>صفحات محتوایی</h2>
-      <p class="hint">هر خط در «متن» یک پاراگراف است. در «لینک‌ها» هر خط را به شکل «برچسب | آدرس» بنویسید.</p>
-      <div id="pages"></div>
-    </section>
+    <div class="tabs">
+      <button type="button" class="tab on" data-tab="content">محتوای سایت</button>
+      <button type="button" class="tab" data-tab="products">محصولات</button>
+    </div>
 
-    <section>
-      <h2>سؤالات متداول</h2>
-      <p class="hint">هر خط: سؤال | جواب</p>
-      <textarea id="faq" rows="8"></textarea>
-    </section>
+    <div id="tab-content">
+      <section>
+        <h2>صفحات محتوایی</h2>
+        <p class="hint">هر خط در «متن» یک پاراگراف است. در «لینک‌ها» هر خط را به شکل «برچسب | آدرس» بنویسید.</p>
+        <div id="pages"></div>
+      </section>
+      <section>
+        <h2>سؤالات متداول</h2>
+        <p class="hint">هر خط: سؤال | جواب</p>
+        <textarea id="faq" rows="8"></textarea>
+      </section>
+      <section>
+        <h2>مزایای فروشگاه</h2>
+        <p class="hint">هر خط: عنوان | متن (آیکون خودکار انتخاب می‌شود)</p>
+        <textarea id="advantages" rows="6"></textarea>
+      </section>
+      <section>
+        <h2>لینک‌های فوتر</h2>
+        <p class="hint">هر خط: برچسب | آدرس</p>
+        <textarea id="footer" rows="8"></textarea>
+      </section>
+      <section>
+        <h2>وبلاگ</h2>
+        <p class="hint">هر خط: عنوان | متن</p>
+        <textarea id="blog" rows="4"></textarea>
+      </section>
+      <div class="row">
+        <button id="save-btn" type="button">ذخیره و انتشار در سایت</button>
+        <span id="save-msg" class="msg"></span>
+      </div>
+    </div>
 
-    <section>
-      <h2>مزایای فروشگاه</h2>
-      <p class="hint">هر خط: عنوان | متن (آیکون خودکار انتخاب می‌شود)</p>
-      <textarea id="advantages" rows="6"></textarea>
-    </section>
-
-    <section>
-      <h2>لینک‌های فوتر</h2>
-      <p class="hint">هر خط: برچسب | آدرس (آدرس‌های #p/... داخل سایت و آدرس‌های https برای بیرون)</p>
-      <textarea id="footer" rows="8"></textarea>
-    </section>
-
-    <section>
-      <h2>وبلاگ</h2>
-      <p class="hint">هر خط: عنوان | متن. خالی بگذارید تا وبلاگ خالی بماند.</p>
-      <textarea id="blog" rows="4"></textarea>
-    </section>
-
-    <div class="row">
-      <button id="save-btn" type="button">ذخیره و انتشار در سایت</button>
-      <span id="save-msg" class="msg"></span>
+    <div id="tab-products" class="hidden">
+      <section>
+        <h2>محصولات موجود</h2>
+        <p class="hint">برچسب‌ها: bestseller (پرفروش)، new (جدید)، featured (منتخب) را با کاما جدا کنید. قیمت قبلی را فقط برای تخفیف پر کنید. محصولات را حذف نمی‌کنیم؛ برای توقف فروش، «فعال» را بردارید.</p>
+        <div class="row" style="margin-bottom:8px"><button id="reload-products" type="button" class="tab">بارگذاری دوباره</button><span id="products-msg" class="msg"></span></div>
+        <div id="product-list"></div>
+      </section>
+      <section>
+        <h2>افزودن محصول جدید</h2>
+        <p class="hint">این فرم برای محصولات دستی و فیزیکی است. محصولات فایلی را از ربات اضافه کنید.</p>
+        <div class="grid2">
+          <div><label>نام محصول</label><input type="text" id="new-name"></div>
+          <div><label>قیمت</label><input type="text" id="new-price"></div>
+          <div><label>قیمت قبلی (اختیاری)</label><input type="text" id="new-old"></div>
+          <div><label>برچسب‌ها</label><input type="text" id="new-tags" placeholder="bestseller,new"></div>
+          <div><label>بخش</label><select id="new-category"></select></div>
+          <div><label>زیربخش</label><input type="text" id="new-sub"></div>
+          <div><label>نوع تحویل</label>
+            <select id="new-type"><option value="service">دستی / هماهنگی با فروشنده</option><option value="physical">فیزیکی (با موجودی)</option></select></div>
+          <div><label>موجودی (فقط فیزیکی)</label><input type="text" id="new-stock" value="1"></div>
+        </div>
+        <label>توضیحات</label>
+        <textarea id="new-desc" rows="3"></textarea>
+        <div class="row" style="margin-top:10px"><button id="create-btn" type="button">افزودن محصول</button><span id="create-msg" class="msg"></span></div>
+      </section>
     </div>
   </div>
 </main>
@@ -91,16 +126,19 @@ const PAGE_KEYS = [
   ['about', 'درباره ما'], ['contact', 'تماس با ما'], ['guide', 'راهنمای خرید'], ['terms', 'قوانین و مقررات'],
   ['privacy', 'حریم خصوصی'], ['refund', 'شرایط بازگشت وجه'], ['warranty', 'ضمانت محصولات'], ['blog', 'وبلاگ']
 ];
+const ERRORS = {
+  unauthorized: 'رمز درست نیست', product_not_found: 'محصول پیدا نشد', invalid_name: 'نام نامعتبر است',
+  invalid_price: 'قیمت نامعتبر است', invalid_old_price: 'قیمت قبلی نامعتبر است', invalid_tags: 'برچسب‌ها نامعتبرند',
+  invalid_stock: 'موجودی باید عدد صحیح باشد', invalid_category: 'بخش نامعتبر است', content_too_large: 'متن خیلی طولانی است'
+};
 let PASSWORD = '';
-let CONTENT = null;
+let CATEGORIES = [];
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const errText = code => ERRORS[code] || code;
 
-function setMsg(el, text, ok) {
-  el.textContent = text;
-  el.className = 'msg ' + (ok ? 'ok' : 'err');
-}
+function setMsg(el, text, ok) { el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'err'); }
 
 async function post(body) {
   const res = await fetch(EXEC_URL, {
@@ -111,7 +149,7 @@ async function post(body) {
   return res.json();
 }
 
-/* ---------- تبدیل متن فرم به داده ---------- */
+/* ---------- محتوای سایت ---------- */
 const lines = t => String(t || '').split('\n').map(x => x.trim()).filter(Boolean);
 const pairs = (t, a, b) => lines(t).map(l => {
   const i = l.indexOf('|');
@@ -120,7 +158,6 @@ const pairs = (t, a, b) => lines(t).map(l => {
 }).filter(Boolean);
 const pairsToText = (arr, a, b) => (arr || []).map(x => `${x[a] || ''} | ${x[b] || ''}`).join('\n');
 
-/* ---------- ساخت و خواندن فرم ---------- */
 function renderPages(pages) {
   $('#pages').innerHTML = PAGE_KEYS.map(([key, name]) => {
     const p = pages[key] || { title: name, body: [] };
@@ -138,7 +175,7 @@ function renderPages(pages) {
   }).join('');
 }
 
-function fillForm(c) {
+function fillContent(c) {
   renderPages(c.pages || {});
   $('#faq').value = pairsToText(c.faq, 'q', 'a');
   $('#advantages').value = pairsToText(c.advantages, 'title', 'text');
@@ -146,55 +183,31 @@ function fillForm(c) {
   $('#blog').value = pairsToText(c.blog, 'title', 'text');
 }
 
-function readForm() {
+function readContent() {
   const pages = {};
   PAGE_KEYS.forEach(([key, name]) => {
-    const body = lines($('#b-' + key).value);
+    const page = { title: $('#t-' + key).value.trim() || name, body: lines($('#b-' + key).value) };
     const links = pairs($('#l-' + key).value, 'label', 'link');
-    const page = { title: $('#t-' + key).value.trim() || name, body };
     if (links.length) page.links = links;
     pages[key] = page;
   });
   return {
     pages,
     faq: pairs($('#faq').value, 'q', 'a'),
-    advantages: pairs($('#advantages').value, 'title', 'text').map(a => ({ icon: '', ...a, text: a.text })),
+    advantages: pairs($('#advantages').value, 'title', 'text'),
     footerLinks: pairs($('#footer').value, 'label', 'link'),
     blog: pairs($('#blog').value, 'title', 'text')
   };
 }
 
-/* ---------- ورود و بارگذاری ---------- */
-async function login() {
-  PASSWORD = $('#pass').value;
-  const msg = $('#login-msg');
-  if (!PASSWORD) return setMsg(msg, 'رمز را وارد کنید.', false);
-  $('#login-btn').disabled = true;
-  try {
-    const r = await post({ adminAction: 'load', password: PASSWORD });
-    if (!r.ok) return setMsg(msg, r.error === 'unauthorized' ? 'رمز درست نیست.' : 'خطا در ورود: ' + r.error, false);
-    CONTENT = r.content || DEFAULTS;
-    fillForm(CONTENT);
-    $('#login').classList.add('hidden');
-    $('#editor').classList.remove('hidden');
-  } catch (e) {
-    setMsg(msg, 'اتصال به ربات برقرار نشد. آدرس EXEC_URL و دسترسی Web App را بررسی کنید.', false);
-  } finally {
-    $('#login-btn').disabled = false;
-  }
-}
-
-/* ---------- ذخیره ---------- */
-async function save() {
+async function saveContent() {
   const msg = $('#save-msg');
-  const content = readForm();
   if (!confirm('محتوا در سایت منتشر شود؟')) return;
   $('#save-btn').disabled = true;
   setMsg(msg, 'در حال ذخیره...', true);
   try {
-    const r = await post({ adminAction: 'save', password: PASSWORD, content });
-    if (r.ok) setMsg(msg, 'ذخیره شد. صفحه‌ی سایت را چند دقیقه بعد رفرش کنید.', true);
-    else setMsg(msg, 'ذخیره نشد: ' + (r.error === 'unauthorized' ? 'رمز درست نیست' : r.error), false);
+    const r = await post({ adminAction: 'save', password: PASSWORD, content: readContent() });
+    setMsg(msg, r.ok ? 'ذخیره شد. صفحه‌ی سایت را چند دقیقه بعد رفرش کنید.' : 'ذخیره نشد: ' + errText(r.error), !!r.ok);
   } catch (e) {
     setMsg(msg, 'ذخیره نشد. اتصال را بررسی کنید.', false);
   } finally {
@@ -202,9 +215,130 @@ async function save() {
   }
 }
 
+/* ---------- محصولات ---------- */
+function catOptions(selected) {
+  return CATEGORIES.map(c => `<option value="${esc(c)}" ${c === selected ? 'selected' : ''}>${esc(c)}</option>`).join('');
+}
+
+function productBox(p) {
+  return `
+  <details class="prod" data-id="${esc(p.id)}">
+    <summary>${esc(p.name)} <span class="hint">· ${esc(p.price)} · ${p.active ? 'فعال' : 'غیرفعال'}</span></summary>
+    <label>نام</label><input type="text" data-f="name" value="${esc(p.name)}">
+    <div class="grid2">
+      <div><label>قیمت</label><input type="text" data-f="price" value="${esc(p.price)}"></div>
+      <div><label>قیمت قبلی (اختیاری)</label><input type="text" data-f="oldPrice" value="${esc(p.oldPrice)}"></div>
+    </div>
+    <label>برچسب‌ها</label><input type="text" data-f="tags" value="${esc(p.tags || '')}" placeholder="bestseller,new,featured">
+    <label>بخش</label><select data-f="category">${catOptions(p.category)}</select>
+    <label>زیربخش</label><input type="text" data-f="subcategory" value="${esc(p.subcategory || '')}">
+    <div class="grid2">
+      <div><label>موجودی (فقط فیزیکی)</label><input type="text" data-f="stock" value="${esc(p.stock)}" ${p.deliveryType === 'physical' ? '' : 'disabled'}></div>
+      <div><label><input type="checkbox" data-f="active" ${p.active ? 'checked' : ''}> فعال (نمایش و فروش)</label></div>
+    </div>
+    <div class="row" style="margin-top:8px"><button type="button" class="save-prod">ذخیره این محصول</button><span class="msg"></span></div>
+  </details>`;
+}
+
+async function loadProducts() {
+  const msg = $('#products-msg');
+  setMsg(msg, 'در حال بارگذاری...', true);
+  try {
+    const r = await post({ adminAction: 'products', password: PASSWORD });
+    if (!r.ok) return setMsg(msg, 'خطا: ' + errText(r.error), false);
+    CATEGORIES = r.categories || [];
+    $('#new-category').innerHTML = catOptions(CATEGORIES[0]);
+    $('#product-list').innerHTML = (r.products || []).map(productBox).join('') || '<p class="hint">محصولی پیدا نشد.</p>';
+    setMsg(msg, `${(r.products || []).length} محصول`, true);
+  } catch (e) {
+    setMsg(msg, 'اتصال برقرار نشد.', false);
+  }
+}
+
+function collectFields(root) {
+  const fields = {};
+  root.querySelectorAll('[data-f]').forEach(el => {
+    if (el.disabled) return;
+    fields[el.dataset.f] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  return fields;
+}
+
+async function saveProduct(btn) {
+  const box = btn.closest('.prod');
+  const msg = box.querySelector('.msg');
+  btn.disabled = true;
+  setMsg(msg, 'در حال ذخیره...', true);
+  try {
+    const r = await post({ adminAction: 'updateProduct', password: PASSWORD, productId: box.dataset.id, fields: collectFields(box) });
+    setMsg(msg, r.ok ? 'ذخیره شد.' : 'خطا: ' + errText(r.error), !!r.ok);
+  } catch (e) {
+    setMsg(msg, 'اتصال برقرار نشد.', false);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function createProduct() {
+  const msg = $('#create-msg');
+  const fields = {
+    name: $('#new-name').value, price: $('#new-price').value, oldPrice: $('#new-old').value,
+    tags: $('#new-tags').value, category: $('#new-category').value, subcategory: $('#new-sub').value,
+    deliveryType: $('#new-type').value, stock: $('#new-stock').value, description: $('#new-desc').value
+  };
+  $('#create-btn').disabled = true;
+  setMsg(msg, 'در حال افزودن...', true);
+  try {
+    const r = await post({ adminAction: 'createProduct', password: PASSWORD, fields });
+    if (r.ok) {
+      setMsg(msg, 'محصول اضافه شد.', true);
+      ['#new-name', '#new-price', '#new-old', '#new-tags', '#new-sub', '#new-desc'].forEach(s => { $(s).value = ''; });
+      $('#new-stock').value = '1';
+      loadProducts();
+    } else {
+      setMsg(msg, 'خطا: ' + errText(r.error), false);
+    }
+  } catch (e) {
+    setMsg(msg, 'اتصال برقرار نشد.', false);
+  } finally {
+    $('#create-btn').disabled = false;
+  }
+}
+
+/* ---------- ورود و تب‌ها ---------- */
+async function login() {
+  PASSWORD = $('#pass').value;
+  const msg = $('#login-msg');
+  if (!PASSWORD) return setMsg(msg, 'رمز را وارد کنید.', false);
+  $('#login-btn').disabled = true;
+  try {
+    const r = await post({ adminAction: 'load', password: PASSWORD });
+    if (!r.ok) return setMsg(msg, errText(r.error) === r.error ? 'خطا در ورود: ' + r.error : errText(r.error), false);
+    fillContent(r.content || DEFAULTS);
+    $('#login').classList.add('hidden');
+    $('#editor').classList.remove('hidden');
+    loadProducts();
+  } catch (e) {
+    setMsg(msg, 'اتصال به ربات برقرار نشد. آدرس EXEC_URL و دسترسی Web App را بررسی کنید.', false);
+  } finally {
+    $('#login-btn').disabled = false;
+  }
+}
+
+document.querySelectorAll('.tab[data-tab]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab[data-tab]').forEach(b => b.classList.toggle('on', b === btn));
+  $('#tab-content').classList.toggle('hidden', btn.dataset.tab !== 'content');
+  $('#tab-products').classList.toggle('hidden', btn.dataset.tab !== 'products');
+}));
 $('#login-btn').addEventListener('click', login);
 $('#pass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-$('#save-btn').addEventListener('click', save);
+$('#save-btn').addEventListener('click', saveContent);
+$('#reload-products').addEventListener('click', loadProducts);
+$('#create-btn').addEventListener('click', createProduct);
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.save-prod');
+  if (btn) saveProduct(btn);
+});
 </script>
 </body>
 </html>
