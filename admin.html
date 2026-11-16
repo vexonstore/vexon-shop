@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>پنل مدیریت محتوای VEXON</title>
+<style>
+:root { --bg:#f4f7fc; --card:#fff; --line:#dde4f0; --text:#1d2433; --muted:#6b7385; --accent:#1f5bdc; --ok:#1a7f4b; --err:#b42318; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f1420; --card:#171f30; --line:#2a3550; --text:#e8edf8; --muted:#9aa5bd; --accent:#6ea0ff; --ok:#4ad08a; --err:#ff8a80; } }
+:root[data-theme="dark"] { --bg:#0f1420; --card:#171f30; --line:#2a3550; --text:#e8edf8; --muted:#9aa5bd; --accent:#6ea0ff; --ok:#4ad08a; --err:#ff8a80; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui, Tahoma, sans-serif; font-size:15px; line-height:1.8; }
+main { max-width: 860px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 20px; margin: 8px 0 14px; }
+h2 { font-size: 16px; margin: 0 0 8px; }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+label { display:block; font-weight:700; margin: 10px 0 4px; font-size: 14px; }
+.hint { color: var(--muted); font-size: 12.5px; margin: 0 0 6px; }
+input[type=text], input[type=password], textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--bg); color: var(--text);
+  border-radius: 10px; padding: 9px 10px; font: inherit; font-size: 14px;
+}
+textarea { min-height: 96px; resize: vertical; }
+button { font: inherit; border: 0; border-radius: 12px; padding: 10px 18px; background: var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+button:disabled { opacity: .5; cursor: default; }
+.row { display:flex; gap:8px; align-items:center; flex-wrap: wrap; }
+.msg { font-weight:700; font-size: 14px; }
+.msg.ok { color: var(--ok); } .msg.err { color: var(--err); }
+details { border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 8px; }
+summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>پنل مدیریت محتوای سایت VEXON</h1>
+
+  <section id="login">
+    <h2>ورود</h2>
+    <p class="hint">رمز پنل را وارد کنید. رمز ذخیره نمی‌شود و با بستن صفحه پاک می‌شود.</p>
+    <div class="row">
+      <input type="password" id="pass" placeholder="رمز پنل" autocomplete="off" style="max-width:320px">
+      <button id="login-btn" type="button">ورود</button>
+    </div>
+    <p id="login-msg" class="msg"></p>
+  </section>
+
+  <div id="editor" class="hidden">
+    <section>
+      <h2>صفحات محتوایی</h2>
+      <p class="hint">هر خط در «متن» یک پاراگراف است. در «لینک‌ها» هر خط را به شکل «برچسب | آدرس» بنویسید.</p>
+      <div id="pages"></div>
+    </section>
+
+    <section>
+      <h2>سؤالات متداول</h2>
+      <p class="hint">هر خط: سؤال | جواب</p>
+      <textarea id="faq" rows="8"></textarea>
+    </section>
+
+    <section>
+      <h2>مزایای فروشگاه</h2>
+      <p class="hint">هر خط: عنوان | متن (آیکون خودکار انتخاب می‌شود)</p>
+      <textarea id="advantages" rows="6"></textarea>
+    </section>
+
+    <section>
+      <h2>لینک‌های فوتر</h2>
+      <p class="hint">هر خط: برچسب | آدرس (آدرس‌های #p/... داخل سایت و آدرس‌های https برای بیرون)</p>
+      <textarea id="footer" rows="8"></textarea>
+    </section>
+
+    <section>
+      <h2>وبلاگ</h2>
+      <p class="hint">هر خط: عنوان | متن. خالی بگذارید تا وبلاگ خالی بماند.</p>
+      <textarea id="blog" rows="4"></textarea>
+    </section>
+
+    <div class="row">
+      <button id="save-btn" type="button">ذخیره و انتشار در سایت</button>
+      <span id="save-msg" class="msg"></span>
+    </div>
+  </div>
+</main>
+
+<script>
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbyeJZgowCaNhK2E1eUQsBhuHmOZOVGQaILDI8F_aXkUL9Ju7hJagzMm_ITy6nqNAfpMpA/exec";
+const DEFAULTS = {"pages": {"about": {"title": "درباره ما", "body": ["VEXON STORE یک فروشگاه دیجیتال است که فیلترشکن، گیفت تلگرام، استارز، تلگرام پرمیوم و اکانت‌های اشتراکی را ارائه می‌دهد.", "هدف ما ارائه‌ی سریع، ساده و قابل‌اعتماد خدمات دیجیتال از داخل ربات تلگرام است."]}, "contact": {"title": "تماس با ما", "body": ["برای پشتیبانی، سؤال یا پیگیری سفارش، از راه‌های زیر با ما در تماس باشید."], "links": [{"label": "پشتیبانی در تلگرام", "link": "https://t.me/Fenadiin"}, {"label": "ربات فروشگاه", "link": "https://t.me/VEXONXBot"}, {"label": "کانال فروشگاه", "link": "https://t.me/VEXONX_Stor"}]}, "guide": {"title": "راهنمای خرید", "body": ["۱. محصول موردنظرتان را از بخش‌های سایت انتخاب کنید.", "۲. روی دکمه‌ی «خرید در ربات» بزنید تا وارد ربات شوید.", "۳. مشخصات لازم را در ربات وارد کنید؛ مثلاً مدت یا تعداد کاربر، یا آیدی مقصد گیفت.", "۴. پرداخت را به‌صورت کارت به کارت انجام دهید.", "۵. پس از تأیید پرداخت، سفارش شما از طریق ربات تحویل داده می‌شود."]}, "terms": {"title": "قوانین و مقررات", "body": ["با خرید از فروشگاه VEXON، این شرایط را می‌پذیرید.", "ارائه‌ی اطلاعات درست هنگام سفارش، مانند آیدی یا لینک مقصد، بر عهده‌ی خریدار است.", "خریدار متعهد است از خدمات تنها در چارچوب قوانین کشور و قوانین ارائه‌دهنده‌ی سرویس استفاده کند."]}, "privacy": {"title": "حریم خصوصی", "body": ["اطلاعاتی که هنگام سفارش در اختیار ما قرار می‌گیرد، مانند آیدی تلگرام و آیدی مقصد، فقط برای انجام و پیگیری سفارش استفاده می‌شود.", "برای هرگونه پرسش درباره‌ی اطلاعات خود، با پشتیبانی در تماس باشید."]}, "refund": {"title": "شرایط بازگشت وجه", "body": ["محصولات دیجیتال و گیفت‌ها پس از ارسال یا فعال‌سازی، قابل بازگشت نیستند.", "اگر سفارش شما به هر دلیل تحویل داده نشد، با پشتیبانی تماس بگیرید تا بررسی و در صورت تأیید، تحویل مجدد یا بازگشت وجه انجام شود."]}, "warranty": {"title": "ضمانت محصولات", "body": ["اگر محصول تحویل‌داده‌شده دچار مشکل فنی شد، با پشتیبانی تماس بگیرید.", "مدت و شرایط ضمانت هر محصول، در ربات اعلام می‌شود."]}, "blog": {"title": "وبلاگ", "body": ["مطالب آموزشی و اخبار فروشگاه به‌زودی در این بخش منتشر می‌شود."]}}, "faq": [{"q": "چطور خرید کنم؟", "a": "محصول موردنظرتان را انتخاب کنید و روی دکمه‌ی «خرید در ربات» بزنید تا وارد ربات فروشگاه شوید. سفارش و پرداخت از داخل ربات انجام می‌شود."}, {"q": "پرداخت چطور انجام می‌شود؟", "a": "پرداخت به‌صورت کارت به کارت از داخل ربات انجام می‌شود."}, {"q": "بعد از پرداخت، سفارشم کجا تحویل داده می‌شود؟", "a": "سفارش شما پس از تأیید پرداخت، از طریق ربات برای شما ارسال می‌شود."}, {"q": "گیفت تلگرام به کجا ارسال می‌شود؟", "a": "گیفت به کانال یا گروه موردنظر شما ارسال می‌شود. آیدی یا لینک مقصد را هنگام سفارش وارد کنید."}, {"q": "مشکلی در سفارشم پیش آمد، چه کنم؟", "a": "با پشتیبانی در تلگرام (@Fenadiin) یا از داخل ربات در تماس باشید."}], "advantages": [{"icon": "⚡", "title": "تحویل سریع", "text": "سفارش شما پس از تأیید پرداخت، از داخل ربات تحویل داده می‌شود."}, {"icon": "💬", "title": "پشتیبانی در ربات", "text": "برای سؤال یا پیگیری سفارش، از طریق پشتیبانی در تماس باشید."}, {"icon": "💳", "title": "پرداخت آسان", "text": "پرداخت کارت به کارت از داخل ربات انجام می‌شود."}, {"icon": "∞", "title": "اشتراک نامحدود", "text": "اشتراک‌های نامحدود با انتخاب مدت و تعداد کاربر."}], "footerLinks": [{"label": "درباره ما", "link": "#p/about"}, {"label": "تماس با ما", "link": "#p/contact"}, {"label": "راهنمای خرید", "link": "#p/guide"}, {"label": "سؤالات متداول", "link": "#p/faq"}, {"label": "قوانین و مقررات", "link": "#p/terms"}, {"label": "حریم خصوصی", "link": "#p/privacy"}, {"label": "شرایط بازگشت وجه", "link": "#p/refund"}, {"label": "ضمانت محصولات", "link": "#p/warranty"}, {"label": "وبلاگ", "link": "#p/blog"}, {"label": "کانال فروشگاه", "link": "https://t.me/VEXONX_Stor"}, {"label": "ربات فروشگاه", "link": "https://t.me/VEXONXBot"}], "blog": []};
+const PAGE_KEYS = [
+  ['about', 'درباره ما'], ['contact', 'تماس با ما'], ['guide', 'راهنمای خرید'], ['terms', 'قوانین و مقررات'],
+  ['privacy', 'حریم خصوصی'], ['refund', 'شرایط بازگشت وجه'], ['warranty', 'ضمانت محصولات'], ['blog', 'وبلاگ']
+];
+let PASSWORD = '';
+let CONTENT = null;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+function setMsg(el, text, ok) {
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+
+async function post(body) {
+  const res = await fetch(EXEC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+/* ---------- تبدیل متن فرم به داده ---------- */
+const lines = t => String(t || '').split('\n').map(x => x.trim()).filter(Boolean);
+const pairs = (t, a, b) => lines(t).map(l => {
+  const i = l.indexOf('|');
+  if (i === -1) return null;
+  return { [a]: l.slice(0, i).trim(), [b]: l.slice(i + 1).trim() };
+}).filter(Boolean);
+const pairsToText = (arr, a, b) => (arr || []).map(x => `${x[a] || ''} | ${x[b] || ''}`).join('\n');
+
+/* ---------- ساخت و خواندن فرم ---------- */
+function renderPages(pages) {
+  $('#pages').innerHTML = PAGE_KEYS.map(([key, name]) => {
+    const p = pages[key] || { title: name, body: [] };
+    const links = (p.links || []).map(l => `${l.label} | ${l.link}`).join('\n');
+    return `
+    <details ${key === 'about' ? 'open' : ''}>
+      <summary>${esc(name)}</summary>
+      <label for="t-${key}">عنوان صفحه</label>
+      <input type="text" id="t-${key}" value="${esc(p.title || name)}">
+      <label for="b-${key}">متن</label>
+      <textarea id="b-${key}">${esc((p.body || []).join('\n'))}</textarea>
+      <label for="l-${key}">لینک‌ها (اختیاری)</label>
+      <textarea id="l-${key}" rows="3">${esc(links)}</textarea>
+    </details>`;
+  }).join('');
+}
+
+function fillForm(c) {
+  renderPages(c.pages || {});
+  $('#faq').value = pairsToText(c.faq, 'q', 'a');
+  $('#advantages').value = pairsToText(c.advantages, 'title', 'text');
+  $('#footer').value = pairsToText(c.footerLinks, 'label', 'link');
+  $('#blog').value = pairsToText(c.blog, 'title', 'text');
+}
+
+function readForm() {
+  const pages = {};
+  PAGE_KEYS.forEach(([key, name]) => {
+    const body = lines($('#b-' + key).value);
+    const links = pairs($('#l-' + key).value, 'label', 'link');
+    const page = { title: $('#t-' + key).value.trim() || name, body };
+    if (links.length) page.links = links;
+    pages[key] = page;
+  });
+  return {
+    pages,
+    faq: pairs($('#faq').value, 'q', 'a'),
+    advantages: pairs($('#advantages').value, 'title', 'text').map(a => ({ icon: '', ...a, text: a.text })),
+    footerLinks: pairs($('#footer').value, 'label', 'link'),
+    blog: pairs($('#blog').value, 'title', 'text')
+  };
+}
+
+/* ---------- ورود و بارگذاری ---------- */
+async function login() {
+  PASSWORD = $('#pass').value;
+  const msg = $('#login-msg');
+  if (!PASSWORD) return setMsg(msg, 'رمز را وارد کنید.', false);
+  $('#login-btn').disabled = true;
+  try {
+    const r = await post({ adminAction: 'load', password: PASSWORD });
+    if (!r.ok) return setMsg(msg, r.error === 'unauthorized' ? 'رمز درست نیست.' : 'خطا در ورود: ' + r.error, false);
+    CONTENT = r.content || DEFAULTS;
+    fillForm(CONTENT);
+    $('#login').classList.add('hidden');
+    $('#editor').classList.remove('hidden');
+  } catch (e) {
+    setMsg(msg, 'اتصال به ربات برقرار نشد. آدرس EXEC_URL و دسترسی Web App را بررسی کنید.', false);
+  } finally {
+    $('#login-btn').disabled = false;
+  }
+}
+
+/* ---------- ذخیره ---------- */
+async function save() {
+  const msg = $('#save-msg');
+  const content = readForm();
+  if (!confirm('محتوا در سایت منتشر شود؟')) return;
+  $('#save-btn').disabled = true;
+  setMsg(msg, 'در حال ذخیره...', true);
+  try {
+    const r = await post({ adminAction: 'save', password: PASSWORD, content });
+    if (r.ok) setMsg(msg, 'ذخیره شد. صفحه‌ی سایت را چند دقیقه بعد رفرش کنید.', true);
+    else setMsg(msg, 'ذخیره نشد: ' + (r.error === 'unauthorized' ? 'رمز درست نیست' : r.error), false);
+  } catch (e) {
+    setMsg(msg, 'ذخیره نشد. اتصال را بررسی کنید.', false);
+  } finally {
+    $('#save-btn').disabled = false;
+  }
+}
+
+$('#login-btn').addEventListener('click', login);
+$('#pass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('#save-btn').addEventListener('click', save);
+</script>
+</body>
+</html>
