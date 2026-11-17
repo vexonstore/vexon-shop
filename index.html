@@ -1066,12 +1066,25 @@ function setStatic() {
 /* ---------- پروفایل مشتری (فقط وقتی داخل تلگرام باز شده) ---------- */
 async function loadProfile() {
   const el = $('#profile');
-  if (!CATALOG_URL || !tg || !tg.initData) { el.hidden = true; return; }
+  if (!CATALOG_URL || !tg || !tg.initData) {
+    if (/[?&]debug=1/.test(location.search)) {
+      el.hidden = false;
+      el.innerHTML = '<div class="psub">DEBUG: no initData (tg=' + !!tg + ')</div>';
+    } else { el.hidden = true; }
+    return;
+  }
   try {
     const url = CATALOG_URL.split('?')[0] + '?action=me&initData=' + encodeURIComponent(tg.initData);
     const res = await fetch(url, { cache: 'no-store' });
     const data = await res.json();
-    if (!data || !data.ok || !data.profile) { el.hidden = true; return; }
+    if (!data || !data.ok || !data.profile) {
+      if (/[?&]debug=1/.test(location.search)) {
+        el.hidden = false;
+        el.innerHTML = '<div class="psub">DEBUG: ' + esc(JSON.stringify(data)) + '</div>';
+        return;
+      }
+      el.hidden = true; return;
+    }
     renderProfile(data.profile);
   } catch (e) {
     el.hidden = true;
