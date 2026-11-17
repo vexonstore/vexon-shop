@@ -361,7 +361,28 @@ footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none;
   border: 1px solid var(--glass-line);
   box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .4), inset 0 1px 0 var(--glass-shine);
   backdrop-filter: blur(20px) saturate(170%); -webkit-backdrop-filter: blur(20px) saturate(170%);
+  overflow: hidden;
 }
+/* درخشش دایره‌ای محو که از «کانال» تا «خانه» حرکت می‌کند (هر ۴ ثانیه، هم‌زمان با درخشش نام فروشگاه) */
+.dock::before {
+  content: ""; position: absolute; top: 50%; left: 0; width: 200px; height: 200px; margin-top: -100px;
+  border-radius: 50%; pointer-events: none; z-index: 2;
+  background: radial-gradient(circle, rgba(31, 91, 220, .18) 0%, rgba(20, 196, 232, .16) 45%, rgba(20, 196, 232, 0) 70%);
+  animation: dockSheenDay 9s linear infinite;
+}
+[data-theme="dark"] .dock::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, .18) 0%, rgba(255, 255, 255, .14) 45%, rgba(255, 255, 255, 0) 70%);
+}
+.dock > * { position: relative; z-index: 1; }
+@keyframes dockSheenDay {
+  from { left: calc(12.5% - 100px); }
+  to   { left: calc(87.5% - 100px); }
+}
+@keyframes dockSheenNight {
+  from { transform: translateX(106.25%); }
+  to   { transform: translateX(168.75%); }
+}
+@media (prefers-reduced-motion: reduce) { .dock::before { animation: none; } }
 .dock a, .dock button {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; text-decoration: none; cursor: pointer;
