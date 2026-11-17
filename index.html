@@ -1342,7 +1342,11 @@ function route() {
   if (!m) {
     page.hidden = true;
     page.innerHTML = '';
-    PAGE_PARTS.forEach(sel => { document.querySelector(sel).hidden = false; });
+    PAGE_PARTS.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (sel === '#profile' || sel === '#promo') { el.hidden = !el.innerHTML.trim(); return; }
+      el.hidden = false;
+    });
     return;
   }
   PAGE_PARTS.forEach(sel => { document.querySelector(sel).hidden = true; });
