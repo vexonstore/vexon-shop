@@ -383,6 +383,21 @@ footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none;
   to   { transform: translateX(168.75%); }
 }
 @media (prefers-reduced-motion: reduce) { .dock::before { animation: none; } }
+/* دکمه‌ی شیشه‌ای بازگشت به بالا (بعد از پایین رفتن ظاهر می‌شود) */
+.totop {
+  position: fixed; right: 16px; bottom: calc(max(10px, env(safe-area-inset-bottom, 0px)) + 74px); z-index: 19;
+  width: 48px; height: 48px; border-radius: 50%; padding: 0; cursor: pointer;
+  display: grid; place-items: center; color: var(--fg);
+  background: radial-gradient(circle at 30% 25%, var(--spot), transparent 65%), var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 12px 26px -12px rgba(0, 0, 0, .4), inset 0 1px 0 var(--glass-shine);
+  backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
+  opacity: 0; transform: translateY(10px) scale(.9); pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.totop.show { opacity: 1; transform: none; pointer-events: auto; }
+.totop svg { width: 20px; height: 20px; }
+.totop:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 .dock a, .dock button {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; text-decoration: none; cursor: pointer;
@@ -919,6 +934,7 @@ h2 svg { color: var(--accent); margin-inline-end: 4px; }
   </footer>
 </div>
 
+<button class="totop" id="totop" type="button" aria-label="بازگشت به بالای صفحه"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>
 <nav class="dock" id="dock" aria-label="میانبرها"></nav>
 
 <div class="sheet-wrap" id="sheet" hidden>
@@ -1546,6 +1562,15 @@ renderPromo();
 renderTabs();
 renderCatalog();
 window.addEventListener('hashchange', route);
+/* دکمه‌ی بازگشت به بالا */
+(function () {
+  const btn = $('#totop');
+  const update = () => btn.classList.toggle('show', window.scrollY > 400);
+  window.addEventListener('scroll', update, { passive: true });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  update();
+})();
+
 route();
 loadLiveCatalog();
 loadProfile();
