@@ -1440,7 +1440,7 @@ document.addEventListener('click', e => {
   if (!a) return;
   e.preventDefault();
   closePanel();
-  if (location.hash.startsWith('#p/')) { history.replaceState(null, '', location.pathname + location.search); route(); }
+  if (location.hash && location.hash !== '#top') { history.replaceState(null, '', location.pathname + location.search); route(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
