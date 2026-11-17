@@ -1069,7 +1069,8 @@ async function loadProfile() {
   if (!CATALOG_URL || !tg || !tg.initData) {
     if (/[?&]debug=1/.test(location.search)) {
       el.hidden = false;
-      el.innerHTML = '<div class="psub">DEBUG: no initData (tg=' + !!tg + ')</div>';
+      const dbg = tg ? ('platform=' + tg.platform + ', version=' + tg.version + ', unsafeUser=' + !!(tg.initDataUnsafe && tg.initDataUnsafe.user) + ', hashInUrl=' + (location.hash.indexOf('tgWebAppData') > -1)) : 'tg=false';
+      el.innerHTML = '<div class="psub">DEBUG: no initData (' + esc(dbg) + ')</div>';
     } else { el.hidden = true; }
     return;
   }
