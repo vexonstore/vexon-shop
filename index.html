@@ -1074,7 +1074,6 @@ function authPageHtml_(name) {
       <p class="authsub">حساب کاربری بسازید تا سفارش‌هایتان را در یک جا ببینید.</p>
       <form id="auth-form" novalidate>
         <label>نام و نام خانوادگی<input name="full_name" autocomplete="name" required></label>
-        <label>ایمیل<input name="email" type="email" autocomplete="email" dir="ltr" required></label>
         <label>نام کاربری<input name="username" autocomplete="username" dir="ltr" required></label>
         <label>رمز عبور (حداقل ۸ کاراکتر)<input name="password" type="password" autocomplete="new-password" dir="ltr" required></label>
         <label>تکرار رمز عبور<input name="password_confirm" type="password" autocomplete="new-password" dir="ltr" required></label>
@@ -1087,13 +1086,12 @@ function authPageHtml_(name) {
     const link = authRead_(AUTH_LINK);
     return `
     <article class="authbox">
-      <h1>تأیید ایمیل</h1>
+      <h1>تأیید حساب</h1>
       <p class="authsub">دکمه‌ی زیر را بزنید تا ربات کد تأیید را در تلگرام برایتان بفرستد. کد یک‌بار مصرف است و ۱۵ دقیقه اعتبار دارد.</p>
       ${link
         ? `<a class="authbtn linkbtn" href="${esc(link)}" target="_blank" rel="noopener">دریافت کد از ربات</a>`
         : `<p class="authmsg err">لینک دریافت کد پیدا نشد. با همان مشخصات دوباره ثبت‌نام کنید تا لینک تازه بگیرید.</p>`}
       <form id="auth-form" novalidate>
-        <label>ایمیل<input name="email" type="email" autocomplete="email" dir="ltr" required></label>
         <label>کد تأیید<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" required></label>
         <p id="auth-msg" class="authmsg" role="alert"></p>
         <button class="authbtn" type="submit">تأیید</button>
@@ -1104,9 +1102,9 @@ function authPageHtml_(name) {
   if (name === 'login') return `
     <article class="authbox">
       <h1>ورود</h1>
-      <p class="authsub">با ایمیل یا نام کاربری و رمز عبور وارد شوید.</p>
+      <p class="authsub">با نام کاربری و رمز عبور وارد شوید.</p>
       <form id="auth-form" novalidate>
-        <label>ایمیل یا نام کاربری<input name="identifier" autocomplete="username" dir="ltr" required></label>
+        <label>نام کاربری<input name="identifier" autocomplete="username" dir="ltr" required></label>
         <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr" required></label>
         <label class="checkrow"><input type="checkbox" name="remember" checked> مرا به خاطر بسپار</label>
         <p id="auth-msg" class="authmsg ${flash ? 'ok' : ''}" role="alert">${esc(flash)}</p>
@@ -1134,19 +1132,17 @@ function authBind_(name) {
       const res = await authCall_('register', data);
       btn.disabled = false;
       if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
-      authStore_(AUTH_PENDING, res.email || data.email);
+      authStore_(AUTH_PENDING, res.username || data.username);
       authStore_(AUTH_LINK, res.bot_link || null);
       location.hash = '#verify';
     });
   }
   if (name === 'verify') {
-    const emailInput = $('#auth-form input[name="email"]');
-    emailInput.value = authRead_(AUTH_PENDING);
     $('#auth-form').addEventListener('submit', async e => {
       e.preventDefault();
       const f = new FormData(e.target);
       const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true;
-      const res = await authCall_('verify', { email: String(f.get('email') || '').trim(), code: String(f.get('code') || '').trim() });
+      const res = await authCall_('verify', { username: authRead_(AUTH_PENDING) || '', code: String(f.get('code') || '').trim() });
       btn.disabled = false;
       if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
       authStore_(AUTH_PENDING, null);
@@ -1191,7 +1187,7 @@ function authBind_(name) {
       }
       const u = res.user;
       const fmt = iso => { try { return new Date(iso).toLocaleDateString('fa-IR'); } catch (e) { return ''; } };
-      const rows = [['نام', u.full_name], ['نام کاربری', '@' + u.username], ['ایمیل', u.email], ['شناسه', u.user_id], ['تاریخ عضویت', fmt(u.created_at)], ['آخرین ورود', fmt(u.last_login_at)]];
+      const rows = [['نام', u.full_name], ['نام کاربری', '@' + u.username], ...(u.email ? [['ایمیل', u.email]] : []), ['شناسه', u.user_id], ['تاریخ عضویت', fmt(u.created_at)], ['آخرین ورود', fmt(u.last_login_at)]];
       const info = $('#acct-info');
       if (info) info.innerHTML = rows.map(r => `<li><span>${esc(r[0])}</span><span>${esc(r[1])}</span></li>`).join('');
     }, 0);
