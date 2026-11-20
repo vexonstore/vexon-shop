@@ -418,6 +418,7 @@ footer.bottom a { color: var(--accent); font-weight: 700; text-decoration: none;
 .authinfo li span:first-child { color: var(--muted); }
 .authinfo li span:last-child { color: var(--fg); font-weight: 700; direction: ltr; text-align: right; }
 .acct-link svg { width: 1em; height: 1em; }
+a.authbtn { display: flex; align-items: center; justify-content: center; text-decoration: none; margin-bottom: 14px; box-sizing: border-box; }
 
 /* دکمه‌ی شیشه‌ای بازگشت به بالا (بعد از پایین رفتن ظاهر می‌شود) */
 .totop {
@@ -996,6 +997,7 @@ const fa = s => String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const AUTH_KEY = 'vexon_session';
 const AUTH_PENDING = 'vexon_pending_email';
 const AUTH_FLASH = 'vexon_flash';
+const AUTH_LINK = 'vexon_bot_link';
 const AUTH_MSG = {
   invalid_name: 'نام و نام خانوادگی باید ۳ تا ۶۰ حرف باشد.',
   invalid_email: 'ایمیل معتبر نیست.',
@@ -1081,19 +1083,24 @@ function authPageHtml_(name) {
       </form>
       <p class="authlink">حساب دارید؟ <a href="#login">ورود</a></p>
     </article>`;
-  if (name === 'verify') return `
+  if (name === 'verify') {
+    const link = authRead_(AUTH_LINK);
+    return `
     <article class="authbox">
       <h1>تأیید ایمیل</h1>
-      <p class="authsub">کد ۶ رقمی را که به ایمیل شما فرستاده شد وارد کنید. کد ۱۵ دقیقه اعتبار دارد.</p>
+      <p class="authsub">دکمه‌ی زیر را بزنید تا ربات کد تأیید را در تلگرام برایتان بفرستد. کد یک‌بار مصرف است و ۱۵ دقیقه اعتبار دارد.</p>
+      ${link
+        ? `<a class="authbtn linkbtn" href="${esc(link)}" target="_blank" rel="noopener">دریافت کد از ربات</a>`
+        : `<p class="authmsg err">لینک دریافت کد پیدا نشد. با همان مشخصات دوباره ثبت‌نام کنید تا لینک تازه بگیرید.</p>`}
       <form id="auth-form" novalidate>
         <label>ایمیل<input name="email" type="email" autocomplete="email" dir="ltr" required></label>
         <label>کد تأیید<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" required></label>
         <p id="auth-msg" class="authmsg" role="alert"></p>
         <button class="authbtn" type="submit">تأیید</button>
-        <button class="authbtn ghost" id="auth-resend" type="button">ارسال دوباره کد</button>
       </form>
-      <p class="authlink"><a href="#register">ثبت‌نام با ایمیل دیگر</a></p>
+      <p class="authlink"><a href="#register">ثبت‌نام با مشخصات دیگر</a></p>
     </article>`;
+  }
   if (name === 'login') return `
     <article class="authbox">
       <h1>ورود</h1>
@@ -1128,32 +1135,13 @@ function authBind_(name) {
       btn.disabled = false;
       if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
       authStore_(AUTH_PENDING, res.email || data.email);
+      authStore_(AUTH_LINK, res.bot_link || null);
       location.hash = '#verify';
     });
   }
   if (name === 'verify') {
     const emailInput = $('#auth-form input[name="email"]');
     emailInput.value = authRead_(AUTH_PENDING);
-    const resend = $('#auth-resend');
-    let timer = null;
-    const startCooldown = () => {
-      let left = 60; resend.disabled = true;
-      resend.textContent = 'ارسال دوباره (' + left + ')';
-      timer = setInterval(() => {
-        left--;
-        if (left <= 0) { clearInterval(timer); resend.disabled = false; resend.textContent = 'ارسال دوباره کد'; }
-        else resend.textContent = 'ارسال دوباره (' + left + ')';
-      }, 1000);
-    };
-    resend.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      if (!email) return authShowMsg_('ایمیل را وارد کنید.', 'err');
-      const res = await authCall_('resend', { email });
-      if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
-      authStore_(AUTH_PENDING, email);
-      authShowMsg_('اگر این ایمیل در انتظار تأیید باشد، کد جدید فرستاده شد.', 'ok');
-      startCooldown();
-    });
     $('#auth-form').addEventListener('submit', async e => {
       e.preventDefault();
       const f = new FormData(e.target);
@@ -1162,6 +1150,7 @@ function authBind_(name) {
       btn.disabled = false;
       if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
       authStore_(AUTH_PENDING, null);
+      authStore_(AUTH_LINK, null);
       authStore_(AUTH_FLASH, 'حساب شما تأیید شد. اکنون وارد شوید.');
       location.hash = '#login';
     });
@@ -1179,11 +1168,8 @@ function authBind_(name) {
       btn.disabled = false;
       authStore_(AUTH_FLASH, null);
       if (!res.ok) {
-        if (res.error === 'not_verified' && res.email) {
-          authStore_(AUTH_PENDING, res.email);
-          authStore_(AUTH_FLASH, AUTH_MSG.not_verified + ' کد تأیید را وارد کنید.');
-          location.hash = '#verify';
-          return;
+        if (res.error === 'not_verified') {
+          return authShowMsg_('حساب شما هنوز تأیید نشده. با همان مشخصات در «ثبت‌نام» لینک دریافت کد را بگیرید.', 'err');
         }
         return authShowMsg_(authErr_(res.error), 'err');
       }
