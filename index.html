@@ -998,6 +998,7 @@ const AUTH_KEY = 'vexon_session';
 const AUTH_PENDING = 'vexon_pending_email';
 const AUTH_FLASH = 'vexon_flash';
 const AUTH_LINK = 'vexon_bot_link';
+const AUTH_RESET = 'vexon_reset_id';
 const AUTH_MSG = {
   invalid_name: 'نام و نام خانوادگی باید ۳ تا ۶۰ حرف باشد.',
   invalid_email: 'ایمیل معتبر نیست.',
@@ -1099,6 +1100,36 @@ function authPageHtml_(name) {
       <p class="authlink"><a href="#register">ثبت‌نام با مشخصات دیگر</a></p>
     </article>`;
   }
+  if (name === 'forgot') return `
+    <article class="authbox">
+      <h1>بازیابی رمز عبور</h1>
+      <p class="authsub">نام کاربری حسابتان را بنویسید. سپس از ربات کد بازیابی می‌گیرید و در صفحه‌ی بعد وارد می‌کنید.</p>
+      <form id="auth-form" novalidate>
+        <label>نام کاربری<input name="identifier" autocomplete="username" dir="ltr" required></label>
+        <p id="auth-msg" class="authmsg" role="alert"></p>
+        <button class="authbtn" type="submit">ادامه</button>
+      </form>
+      <p class="authlink"><a href="#login">بازگشت به ورود</a></p>
+    </article>`;
+  if (name === 'reset') {
+    const link = authRead_(AUTH_LINK);
+    return `
+    <article class="authbox">
+      <h1>تنظیم رمز جدید</h1>
+      <p class="authsub">دکمه‌ی زیر را بزنید تا ربات کد بازیابی را در تلگرام بفرستد. کد یک‌بار مصرف است و ۱۵ دقیقه اعتبار دارد.</p>
+      ${link
+        ? `<a class="authbtn linkbtn" href="${esc(link)}" target="_blank" rel="noopener">دریافت کد از ربات</a>`
+        : `<p class="authmsg err">لینک پیدا نشد. از «فراموشی رمز» دوباره شروع کنید.</p>`}
+      <form id="auth-form" novalidate>
+        <label>کد بازیابی<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" required></label>
+        <label>رمز عبور جدید (حداقل ۸ کاراکتر)<input name="password" type="password" autocomplete="new-password" dir="ltr" required></label>
+        <label>تکرار رمز عبور جدید<input name="password_confirm" type="password" autocomplete="new-password" dir="ltr" required></label>
+        <p id="auth-msg" class="authmsg" role="alert"></p>
+        <button class="authbtn" type="submit">تغییر رمز</button>
+      </form>
+      <p class="authlink"><a href="#forgot">ارسال دوباره‌ی لینک</a></p>
+    </article>`;
+  }
   if (name === 'login') return `
     <article class="authbox">
       <h1>ورود</h1>
@@ -1110,6 +1141,7 @@ function authPageHtml_(name) {
         <p id="auth-msg" class="authmsg ${flash ? 'ok' : ''}" role="alert">${esc(flash)}</p>
         <button class="authbtn" type="submit">ورود</button>
       </form>
+      <p class="authlink"><a href="#forgot">رمز عبور را فراموش کرده‌اید؟</a></p>
       <p class="authlink">حساب ندارید؟ <a href="#register">ثبت‌نام</a></p>
     </article>`;
   return `
@@ -1174,6 +1206,42 @@ function authBind_(name) {
       location.hash = '#account';
     });
   }
+  if (name === 'forgot') {
+    $('#auth-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const identifier = String(f.get('identifier') || '').trim();
+      if (!identifier) return authShowMsg_('نام کاربری را وارد کنید.', 'err');
+      const btn = e.target.querySelector('button'); btn.disabled = true;
+      const res = await authCall_('forgot', { identifier });
+      btn.disabled = false;
+      if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
+      authStore_(AUTH_RESET, identifier);
+      authStore_(AUTH_LINK, res.bot_link || null);
+      location.hash = '#reset';
+    });
+  }
+  if (name === 'reset') {
+    $('#auth-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const data = Object.fromEntries(f.entries());
+      if (data.password !== data.password_confirm) return authShowMsg_(AUTH_MSG.password_mismatch, 'err');
+      const btn = e.target.querySelector('button'); btn.disabled = true;
+      const res = await authCall_('reset', {
+        identifier: authRead_(AUTH_RESET),
+        code: String(data.code || '').trim(),
+        password: data.password,
+        password_confirm: data.password_confirm
+      });
+      btn.disabled = false;
+      if (!res.ok) return authShowMsg_(authErr_(res.error), 'err');
+      authStore_(AUTH_RESET, null);
+      authStore_(AUTH_LINK, null);
+      authStore_(AUTH_FLASH, 'رمز عبورت تغییر کرد. با رمز جدید وارد شو.');
+      location.hash = '#login';
+    });
+  }
   if (name === 'account') {
     const token = authToken_();
     if (!token) { location.hash = '#login'; return; }
@@ -1202,7 +1270,7 @@ function authBind_(name) {
 
 /* اگر آدرس یکی از صفحات حساب بود، همان را نشان بده و true برگردان */
 function authRoute_() {
-  const name = { '#register': 'register', '#verify': 'verify', '#login': 'login', '#account': 'account' }[location.hash];
+  const name = { '#register': 'register', '#verify': 'verify', '#login': 'login', '#account': 'account', '#forgot': 'forgot', '#reset': 'reset' }[location.hash];
   if (!name) return false;
   document.querySelectorAll('.hero, #profile, #promo, #slider, #home-top, #home-bottom, #q, #tabs, #catalog').forEach(el => { el.hidden = true; });
   const page = $('#page');
